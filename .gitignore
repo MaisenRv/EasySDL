@@ -1,0 +1,5 @@
+.vscode
+bin/app
+bin/web/*
+include/EasySDL/objects/text/fonts/*
+!include/EasySDL/objects/text/fonts/Poppins-Regular.ttf

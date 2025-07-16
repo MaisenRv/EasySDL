@@ -1,0 +1,119 @@
+#pragma once
+#include "../../types/Vec2.hpp"
+#include "../../utils/shadersUtils.hpp"
+#include "../../utils/pathList.hpp"
+#include "../../Window.hpp"
+#include <vector>
+#include <SDL2/SDL.h>
+#include <GL/glew.h>
+
+namespace EasySDL
+{
+    class Particle
+    {
+    private:
+        // Particle info
+        float _size;
+        int _resolution;
+        EasySDL::Vec2 _position;
+        float _color[4] = {1.0f,1.0f,1.0f,1.0f};
+        EasySDL::Vec2 _vel;
+        EasySDL::Vec2 _as;
+        float _mass;
+
+        //  Vertex info
+        std::vector<float> _vertexList;
+
+        // Shader info
+        GLuint _vertexSrc;
+        GLuint _fragmentSrc;
+
+        void calculateVertex()
+        {
+            this->_vertexList.clear();
+            // push center
+            this->_vertexList.push_back(this->_position.x);
+            this->_vertexList.push_back(this->_position.y);
+
+            float angle = 0;
+            float delta = (2.0f * float(M_PI)) / this->_resolution;
+            for (size_t i = 0; i <= this->_resolution; i++)
+            {
+                angle += delta;
+                float x = this->_position.x + this->_size * std::cos(angle);
+                float y = this->_position.y + this->_size * std::sin(angle);
+                this->_vertexList.push_back(x);
+                this->_vertexList.push_back(y);
+            }
+        }
+
+    public:
+        GLuint program;
+        int vertexCount;
+
+        Particle(float x, float y, float size, int resolution) : _position{x, y}, _size(size), _resolution(resolution)
+        {};
+
+        void draw(EasySDL::Window *w)
+        {
+            this->calculateVertex();
+            this->vertexCount = this->_vertexList.size() / 2;
+            // 1) Subir datos al VBO:
+            glBindBuffer(GL_ARRAY_BUFFER, w->VBO);
+            glBufferData(
+                GL_ARRAY_BUFFER,
+                this->_vertexList.size() * sizeof(float),
+                this->_vertexList.data(),
+                GL_DYNAMIC_DRAW);
+
+            // 2) Activar shader y pasar la uniform:
+            GLint loc = glGetUniformLocation(this->program, "u_WindowSize");
+            GLint colorLoc = glGetUniformLocation(this->program, "u_Color"); // Color
+            glUseProgram(this->program);
+            glUniform2f(loc, (float)w->getWidth(), (float)w->getHeight());
+            glUniform4f(colorLoc, this->_color[0], this->_color[1], this->_color[2], this->_color[3]);
+
+            // 3) Dibujar con el VAO ya configurado:
+            glBindVertexArray(w->VAO);
+            glDrawArrays(GL_TRIANGLE_FAN, 0, this->vertexCount);
+        }
+
+        void setup()
+        {
+            this->_vertexSrc = EasySDL::compileShader(GL_VERTEX_SHADER, EasySDL::BASIC_VERTEX_SHADER_PATH);
+            this->_fragmentSrc = EasySDL::compileShader(GL_FRAGMENT_SHADER, EasySDL::BASIC_FRAGMENT_SHADER_PATH);
+            this->program = glCreateProgram();
+            glAttachShader(program, this->_vertexSrc);
+            glAttachShader(program, this->_fragmentSrc);
+            glLinkProgram(program);
+        }
+
+        void update()
+        {
+            this->_position.x += 1;
+        }
+
+        ~Particle()
+        {
+            glDeleteShader(this->_vertexSrc);
+            glDeleteShader(this->_fragmentSrc);
+        }
+
+        //-------------------- Getters and setters
+        void setColor(const float (&NewColor)[4])
+        {
+            for (size_t i = 0; i < 4; i++)
+            {
+                this->_color[i] = NewColor[i];
+            }
+        }
+
+        EasySDL::Vec2 getPos(){
+            return this->_position;
+        }
+        void setPos(const EasySDL::Vec2 newPos){
+            this->_position = newPos;
+        }
+
+    };
+}
