@@ -5,6 +5,7 @@
 #include <GL/glew.h>
 #include <vector>
 #include "../../utils/pathList.hpp"
+#include "../../types/Vec2.hpp"
 #include "../../utils/shadersUtils.hpp"
 #include "../../Window.hpp"
 
@@ -29,9 +30,12 @@ namespace EasySDL
         GLuint vertShader, fragShader;
         GLuint program;
 
-        // Quad with two triangles (6 vertices)
+        
         std::vector<float> vertices;
         unsigned int indices[6] = {0, 1, 2, 2, 3, 0};
+        float _scale = 1;
+        Vec2 _pos = {0,0};
+        std::string _message = "";
 
         void generateTexture(const std::string &str)
         {
@@ -130,9 +134,9 @@ namespace EasySDL
             TTF_CloseFont(font);
         }
 
-        void draw(EasySDL::Window *w, const std::string &message, float x, float y, float scale)
+        void draw(EasySDL::Window *w)
         {
-            generateTexture(message);
+            generateTexture(this->_message);
             updateVertices();
             // Update buffer data
             glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -149,15 +153,33 @@ namespace EasySDL
             // In shader, position is in pixels relative to center; we need to shift by x,y
             GLint locOff = glGetUniformLocation(program, "u_Offset");
             if (locOff >= 0)
-                glUniform2f(locOff, x, y);
+                glUniform2f(locOff, this->_pos.x, this->_pos.y);
             GLint locScale = glGetUniformLocation(program, "u_Scale");
-            glUniform2f(locScale, scale, scale);
+            glUniform2f(locScale, this->_scale, this->_scale);
             // Draw
             glBindVertexArray(VAO);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
             glBindVertexArray(0);
         }
 
+        void shiftX(float delta)
+        {
+            this->_pos.x -= delta;
+        }
+        //-------------------- Getters and setters
+        void setScale(float scale){
+            this->_scale = scale;
+        }
+
+        void setPos(Vec2 newPos){
+            this->_pos.x = newPos.x;
+            this->_pos.y = newPos.y;
+        }
+
+        void setMessage(const std::string &message){
+            this->_message = message;
+        }
+        
         int getwText(){
             return this->wText;
         }
@@ -165,6 +187,7 @@ namespace EasySDL
         int gethText(){
             return this->hText;
         }
+
     };
 }
 

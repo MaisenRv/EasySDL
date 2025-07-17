@@ -62,9 +62,9 @@ namespace EasySDL
             // GL_LINE_STRIP: dibuja una línea continua uniendo todos los vértices.
             // GL_LINE_LOOP: similar a LINE_STRIP, pero conectando el último vértice con el primero
         }
-        void update(float x0, float y0, float x1, float y1){
-            this->_calculateVertex(x0,y0,x1,y1);
-        }
+        // void update(float x0, float y0, float x1, float y1){
+        //     this->_calculateVertex(x0,y0,x1,y1);
+        // }
 
 
         void setup()
@@ -83,6 +83,13 @@ namespace EasySDL
             glDeleteShader(this->_fragmentSrc);
         }
 
+        void shiftX(float delta)
+        {
+            for (size_t i = 0; i < this->_vertexList.size(); i += 2)
+            {
+                this->_vertexList[i] -= delta;
+            }
+        }
         //-------------------- Getters and setters
         void setColor(const float (&NewColor)[4])
         {
@@ -94,6 +101,11 @@ namespace EasySDL
         void setPositions(float x0, float y0, float x1, float y1){
             this->_calculateVertex(x0,y0,x1,y1);
         }
+
+        const std::vector<float>& getVertexList(){
+            return this->_vertexList;
+        }
+
     };
 
 }

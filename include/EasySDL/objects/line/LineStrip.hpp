@@ -23,18 +23,18 @@ namespace EasySDL
         GLuint _vertexSrc;
         GLuint _fragmentSrc;
 
-
     public:
         GLuint program;
         int vertexCount;
 
-        LineStrip(GLfloat lineWidth):_lineWidth(lineWidth) {}
+        LineStrip(GLfloat lineWidth) : _lineWidth(lineWidth) {}
 
         void draw(EasySDL::Window *w)
         {
             this->vertexCount = (int)(this->_vertexList.size() / 2);
-            if (this->vertexCount == 0) return;
-            
+            if (this->vertexCount == 0)
+                return;
+
             glBindBuffer(GL_ARRAY_BUFFER, w->VBO);
             glBufferData(
                 GL_ARRAY_BUFFER,
@@ -61,7 +61,8 @@ namespace EasySDL
             glLinkProgram(program);
         }
 
-        void addPoint(Vec2 point){
+        void addPoint(Vec2 point)
+        {
             this->_vertexList.push_back(point.x);
             this->_vertexList.push_back(point.y);
         }
@@ -72,6 +73,23 @@ namespace EasySDL
             glDeleteShader(this->_fragmentSrc);
         }
 
+        void removeFirstPoint()
+        {
+            if (!this->_vertexList.empty())
+            {
+                this->_vertexList.erase(this->_vertexList.begin());
+                this->_vertexList.erase(this->_vertexList.begin());
+            }
+        }
+
+        void shiftX(float delta)
+        {
+            for (size_t i = 0; i < this->_vertexList.size(); i += 2)
+            {
+                this->_vertexList[i] -= delta;
+            }
+        }
+
         //-------------------- Getters and setters
         void setColor(const float (&NewColor)[4])
         {
@@ -79,6 +97,16 @@ namespace EasySDL
             {
                 this->_color[i] = NewColor[i];
             }
+        }
+
+        int getVertexSize()
+        {
+            return this->_vertexList.size() / 2;
+        }
+
+        std::vector<float> &getVertexList()
+        {
+            return this->_vertexList;
         }
     };
 

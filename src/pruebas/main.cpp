@@ -13,7 +13,7 @@
 
 
 EasySDL::Window *w = new EasySDL::Window(600, 600, "Ventana");
-EasySDL::LineChart c({100,100},400,400,"Chart");
+EasySDL::LineChart c({100,100},400,300,"Chart");
 // EasySDL::LineStrip l (1);
 
 void setup()
@@ -30,6 +30,7 @@ void draw()
 {
     c.draw(w);
 //    l.draw(w);
+    c.addCoord(0.32);
 }
 
 int main()

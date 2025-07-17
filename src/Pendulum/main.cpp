@@ -24,13 +24,16 @@ void setup(){
     pMass.setup();
 
     line.setup();
+    infoAngle.setScale(0.2);
+    infoAngle.setPos({400,460});
 }
 
 void draw(){
     line.draw(w);
     point.draw(w);
     pMass.draw(w);
-    infoAngle.draw(w,line.getAngleDegStr(),400,460,0.2);
+    infoAngle.setMessage(line.getAngleDegStr());
+    infoAngle.draw(w);
     line.setAngle(pendulum.calculateAngleNextIteration());
     pMass.setPos(line.getPosPoint2());
 }
