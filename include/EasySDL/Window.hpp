@@ -3,7 +3,7 @@
 #include <GL/glew.h>
 #include <functional>
 #include <iostream>
-
+#include "../Math/constans/Constans.hpp"
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #include <emscripten/html5.h>
@@ -22,6 +22,7 @@ namespace EasySDL
         const char *_title;
         SDL_Window *_win;
         SDL_GLContext _context;
+        float _fps = 0;
 
         std::function<void()> _setup;
 
@@ -146,9 +147,9 @@ namespace EasySDL
 
                 // DRAW
                 this->_drawFn();
-
+                this->showFPS(); 
                 SDL_GL_SwapWindow(this->_win);
-                SDL_Delay(11.1);
+                SDL_Delay(Math::DELAY_90_FPS);
             }
 #endif
         }
@@ -165,7 +166,7 @@ namespace EasySDL
                     emscripten_cancel_main_loop();
 #endif
                 }
-                SDL_Delay(16.6);
+                SDL_Delay(Math::DELAY_90_FPS);
             }
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -192,6 +193,25 @@ namespace EasySDL
             SDL_DestroyWindow(this->_win);
             TTF_Quit();
             SDL_Quit();
+        }
+
+        void showFPS(){
+            static Uint32 lastTime = SDL_GetTicks();
+            static int frames = 0;
+            static float fps = 0.0f;
+
+            Uint32 currentTime = SDL_GetTicks();
+            frames++;
+
+            if (currentTime - lastTime >= 1000) {  // Cada 1 segundo
+                fps = frames * 1000.0f / (currentTime - lastTime);
+                this->_fps = fps;
+                frames = 0;
+                lastTime = currentTime;
+            }
+        }
+        float getFPS(){
+            return this->_fps;
         }
     };
     Window *Window::_instance = nullptr;

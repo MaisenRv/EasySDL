@@ -18,7 +18,6 @@
 
 namespace EasySDL
 {
-
     class Text
     {
     private:

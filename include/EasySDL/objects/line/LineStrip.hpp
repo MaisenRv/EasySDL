@@ -6,6 +6,7 @@
 #include <vector>
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
+#include <functional>
 
 namespace EasySDL
 {
@@ -23,6 +24,10 @@ namespace EasySDL
         GLuint _vertexSrc;
         GLuint _fragmentSrc;
 
+        // Shift shader
+        GLuint _shiftVBO;
+        GLuint _shiftProgram;
+
     public:
         GLuint program;
         int vertexCount;
@@ -32,8 +37,7 @@ namespace EasySDL
         void draw(EasySDL::Window *w)
         {
             this->vertexCount = (int)(this->_vertexList.size() / 2);
-            if (this->vertexCount == 0)
-                return;
+            if (this->vertexCount == 0) return;
 
             glBindBuffer(GL_ARRAY_BUFFER, w->VBO);
             glBufferData(
@@ -59,6 +63,28 @@ namespace EasySDL
             glAttachShader(program, this->_vertexSrc);
             glAttachShader(program, this->_fragmentSrc);
             glLinkProgram(program);
+
+            // SHIFT PROGRAM
+
+            glGenBuffers(1,&this->_shiftVBO);
+            glBindBuffer(GL_ARRAY_BUFFER, this->_shiftVBO);
+            glBufferData(
+                GL_ARRAY_BUFFER,
+                this->_vertexList.size()* sizeof(float),
+                nullptr,
+                GL_DYNAMIC_COPY
+            );
+
+            GLuint shiftVertex = EasySDL::compileShader(GL_VERTEX_SHADER,EasySDL::SHIFT_VERTEX_SHADER_PATH);
+            this->_shiftProgram = glCreateProgram();
+            glAttachShader(this->_shiftProgram,shiftVertex);
+
+            const GLchar* varyings[] = { "vPos" };
+            glTransformFeedbackVaryings(this->_shiftProgram, 1,
+                            varyings, GL_INTERLEAVED_ATTRIBS
+                        );
+            glLinkProgram(this->_shiftProgram);
+            glDeleteShader(shiftVertex);
         }
 
         void addPoint(Vec2 point)
@@ -82,11 +108,70 @@ namespace EasySDL
             }
         }
 
-        void shiftX(float delta)
-        {
-            for (size_t i = 0; i < this->_vertexList.size(); i += 2)
-            {
+        void shiftX(float delta,EasySDL::Window *w){
+            // // 1) Recalcula cuántos vértices tenemos
+            // vertexCount = static_cast<int>(_vertexList.size() / 2);
+            // if (vertexCount == 0) return;
+
+            // // 2) Acumula el shift y pásalo al shader
+            // //    (si quieres acumulativo, sustituye delta por _shiftXAmount += delta)
+            // glUseProgram(_shiftProgram);
+            // GLint loc = glGetUniformLocation(_shiftProgram, "u_ShiftX");
+            // glUniform1f(loc, delta);
+
+            // // 3) Asegura espacio en el buffer de feedback
+            // glBindBuffer(GL_ARRAY_BUFFER, _shiftVBO);
+            // glBufferData(GL_ARRAY_BUFFER,
+            //             _vertexList.size() * sizeof(float),
+            //             nullptr,
+            //             GL_DYNAMIC_COPY);
+
+            // // 4) Sube los datos fuente al VBO de la ventana
+            // glBindBuffer(GL_ARRAY_BUFFER, w->VBO);
+            // glBufferData(GL_ARRAY_BUFFER,
+            //             _vertexList.size() * sizeof(float),
+            //             _vertexList.data(),
+            //             GL_DYNAMIC_DRAW);
+
+            // // 5) Configura VAO para leer de w->VBO
+            // glBindVertexArray(w->VAO);
+            // glEnableVertexAttribArray(0);
+            // glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+            // // 6) Enlaza buffer de salida para Feedback
+            // glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, _shiftVBO);
+
+            // // 7) Ejecuta Transform Feedback (sin rasterizar)
+            // glEnable(GL_RASTERIZER_DISCARD);
+            // glBeginTransformFeedback(GL_POINTS);
+            // glDrawArrays(GL_POINTS, 0, vertexCount);
+            // glEndTransformFeedback();
+            // glDisable(GL_RASTERIZER_DISCARD);
+
+            // // 8) Leer de vuelta al vector CPU
+            // _vertexList.resize(vertexCount * 2);
+            // glBindBuffer(GL_ARRAY_BUFFER, _shiftVBO);
+            // glGetBufferSubData(GL_ARRAY_BUFFER,
+            //                 0,
+            //                 _vertexList.size() * sizeof(float),
+            //                 _vertexList.data());
+
+            // // 9) Restablece el VAO de la ventana (por si acaso)
+            // glBindVertexArray(w->VAO);
+
+            for (size_t i = 0; i < this->_vertexList.size(); i += 2){
                 this->_vertexList[i] -= delta;
+            }
+        }
+
+        void updateAllPoint(std::function<Vec2(float x,float y)> updateFunction){
+            std::vector<float> copyPoints(this->_vertexList);
+            this->_vertexList.clear();
+            for (size_t i = 0; i < copyPoints.size(); i += 2)
+            {
+                Vec2 newPoints = updateFunction(copyPoints[i], copyPoints[i+1]);
+                this->_vertexList.push_back(newPoints.x);
+                this->_vertexList.push_back(newPoints.y);
             }
         }
 

@@ -39,5 +39,8 @@ namespace Math
         {
             return (-Math::G.y * sin(this->angle)) / this->length;
         }
+        void setAngle(float angle){
+            this->angle = angle;
+        }
     };
 }

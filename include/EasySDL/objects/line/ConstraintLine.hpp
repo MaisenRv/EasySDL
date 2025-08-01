@@ -14,17 +14,12 @@ namespace EasySDL
         float _angle;
         void _calculateVertex(float x0, float y0)
         {
-
-            float x1 = this->_vertexList[2];
-            float y1 = this->_vertexList[3];
             this->_vertexList.clear();
             this->_vertexList.push_back(x0);
             this->_vertexList.push_back(y0);
-            EasySDL::Vec2 p0{x0, y0};
-            EasySDL::Vec2 p1{x1, y1};
 
-            float x = p0.x + cos(this->_angle) * this->_length;
-            float y = p0.y + sin(this->_angle) * this->_length;
+            float x = x0 + (cos(this->_angle) * this->_length);
+            float y = y0 + (sin(this->_angle) * this->_length);
             this->_vertexList.push_back(x);
             this->_vertexList.push_back(y);
         }
