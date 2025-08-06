@@ -1,11 +1,10 @@
 #pragma once
 #include <SDL2/SDL.h>
-
-
+#include "../../interface/IDrawable.hpp"
 #include <GL/glew.h>
 #include <vector>
 #include "../../utils/pathList.hpp"
-#include "../../types/Vec2.hpp"
+#include "../../../Math/types/Vec2.hpp"
 #include "../../utils/shadersUtils.hpp"
 #include "../../Window.hpp"
 
@@ -18,7 +17,7 @@
 
 namespace EasySDL
 {
-    class Text
+    class Text : public EasySDL::IDrawable
     {
     private:
         TTF_Font *font;
@@ -133,7 +132,7 @@ namespace EasySDL
             TTF_CloseFont(font);
         }
 
-        void draw(EasySDL::Window *w)
+        void draw(EasySDL::Window *w) override
         {
             generateTexture(this->_message);
             updateVertices();

@@ -1,26 +1,20 @@
 #pragma once
-#include "../../Window.hpp"
-#include "../../utils/shadersUtils.hpp"
-#include "../../utils/pathList.hpp"
+#include "../../../Window.hpp"
+#include "../../../utils/shadersUtils.hpp"
+#include "../../../utils/pathList.hpp"
+#include "../shape.hpp"
 #include <vector>
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
 
 namespace EasySDL
 {
-    class Line
+    class Line : public EasySDL::Shape
     {
     protected:
         // Line info
         GLfloat _lineWidth;
-        float _color[4] = {1.0f, 1.0f, 1.0f, 1.0f};
 
-        //  Vertex info
-        std::vector<float> _vertexList;
-
-        // Shader info
-        GLuint _vertexSrc;
-        GLuint _fragmentSrc;
 
         void _calculateVertex(float x0, float y0, float x1, float y1)
         {
@@ -32,15 +26,13 @@ namespace EasySDL
         }
 
     public:
-        GLuint program;
-        const int vertexCount = 2;
-
         Line(float x0, float y0, float x1, float y1, GLfloat lineWidth) : _lineWidth(lineWidth)
         {
+            this->vertexCount = 2;
             this->_calculateVertex(x0,y0,x1,y1);
         }
 
-        virtual void draw(EasySDL::Window *w)
+        void draw(EasySDL::Window *w) override
         {
             glBindBuffer(GL_ARRAY_BUFFER, w->VBO);
             glBufferData(
@@ -91,13 +83,6 @@ namespace EasySDL
             }
         }
         //-------------------- Getters and setters
-        void setColor(const float (&NewColor)[4])
-        {
-            for (size_t i = 0; i < 4; i++)
-            {
-                this->_color[i] = NewColor[i];
-            }
-        }
         void setPositions(float x0, float y0, float x1, float y1){
             this->_calculateVertex(x0,y0,x1,y1);
         }

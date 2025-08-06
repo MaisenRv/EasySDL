@@ -203,7 +203,7 @@ namespace EasySDL
             Uint32 currentTime = SDL_GetTicks();
             frames++;
 
-            if (currentTime - lastTime >= 1000) {  // Cada 1 segundo
+            if (currentTime - lastTime >= 1000) {
                 fps = frames * 1000.0f / (currentTime - lastTime);
                 this->_fps = fps;
                 frames = 0;

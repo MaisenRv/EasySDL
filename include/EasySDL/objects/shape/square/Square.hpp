@@ -1,26 +1,24 @@
 #pragma once
-#include "../../Window.hpp"
-#include "../../types/Vec2.hpp"
-#include "../../utils/shadersUtils.hpp"
-#include "../../utils/pathList.hpp"
+#include "../../../Window.hpp"
+#include "../../../../Math/types/Vec2.hpp"
+#include "../../../utils/shadersUtils.hpp"
+#include "../../../utils/pathList.hpp"
+#include "../../../../Math/transformation/rotation2D.hpp"
+#include "../shape.hpp"
 #include <SDL2/SDL.h>
 
 namespace EasySDL
 {
-    class Square
+    class Square : public EasySDL::Shape 
     {
     private:
         int _width;
         int _height;
         EasySDL::Vec2 _position;
-        float _color[4] = {1.0f, 1.0f, 1.0f, 1.0f};
 
         //  Vertex info
-        std::vector<float> _vertexList;
+        float _angle = 0;
 
-        // Shader info
-        GLuint _vertexSrc;
-        GLuint _fragmentSrc;
         void _calculateVertex()
         {
             this->_vertexList.clear();
@@ -44,17 +42,28 @@ namespace EasySDL
 
             this->_vertexList.push_back(this->_position.x - hWidth);
             this->_vertexList.push_back(this->_position.y + hHeight);
+
+            std::vector<float> vertexCopy(this->_vertexList);
+            this->_vertexList.clear();
+            for(size_t i = 0; i < vertexCopy.size();  i += 2){
+                EasySDL::Vec2 result = EasySDL::rotate2D(
+                    {vertexCopy[i],vertexCopy[i+1]},
+                    this->_angle,
+                    this->_position
+                );
+                this->_vertexList.push_back(result.x);
+                this->_vertexList.push_back(result.y);
+            }
         }
 
     public:
-        GLuint program;
-        int vertexCount = 6;
-
-        Square(EasySDL::Vec2 pos, float width, float height) : _position(pos), _width(width), _height(height) {}
-
-        void draw(EasySDL::Window *w)
-        {
+        Square(EasySDL::Vec2 pos, float width, float height) : _position(pos), _width(width), _height(height) {
+            this->vertexCount = 6;
             this->_calculateVertex();
+        }
+
+        void draw(EasySDL::Window *w) override
+        {
             glBindBuffer(GL_ARRAY_BUFFER, w->VBO);
             glBufferData(
                 GL_ARRAY_BUFFER,
@@ -86,5 +95,18 @@ namespace EasySDL
             glDeleteShader(this->_vertexSrc);
             glDeleteShader(this->_fragmentSrc);
         }
+	// --------- GETTERS SETTERS
+
+
+    void setPos(const EasySDL::Vec2 & newPos){
+        this->_position = newPos;
+        this->_calculateVertex();
+    }
+
+    void setAngle(const float angle){
+        this->_angle = angle;
+        this->_calculateVertex();
+    }
+
     };
 }

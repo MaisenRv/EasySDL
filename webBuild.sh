@@ -13,5 +13,5 @@ em++ $1 \
   --preload-file ./include/EasySDL/shaders/fragmentShader.glsl \
   --preload-file ./include/EasySDL/shaders/vertexTextShader.glsl \
   --preload-file ./include/EasySDL/shaders/fragmentTextShader.glsl \
-  --preload-file  ./include/EasySDL/objects/text/fonts/Poppins-Regular.ttf \
+  --preload-file ./include/EasySDL/objects/text/fonts/Poppins-Regular.ttf \
   -o ./bin/web/prueba.js

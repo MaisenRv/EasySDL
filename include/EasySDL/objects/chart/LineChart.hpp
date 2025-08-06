@@ -1,10 +1,11 @@
 #pragma once
-#include "../line/Line.hpp"
-#include "../line/LineStrip.hpp"
+#include "../shape/line/Line.hpp"
+#include "../shape/line/LineStrip.hpp"
 #include "../text/Text.hpp"
-#include "../../types/Vec2.hpp"
+#include "../../../Math/types/Vec2.hpp"
 #include "../../Window.hpp"
-#include "../../utils/pathList.hpp"
+#include "../../interface/IDrawable.hpp"
+#include "../../utils/fonts.hpp"
 #include "../../utils/format.hpp"
 #include "../../../Math/constans/Constans.hpp"
 #include <string>
@@ -16,7 +17,7 @@
 
 namespace EasySDL
 {
-    class LineChart
+    class LineChart : public EasySDL::IDrawable
     {
     private:
         // Chart info
@@ -120,12 +121,13 @@ namespace EasySDL
             for(auto& column: this->_columns) { 
                 float shiftValue = this->_valueToPixelX(this->_step); 
                 column->shiftX(shiftValue);
-                if (!changeColumn && column->getVertexList()[0] <= this->_pos.x){
+                float columnX = column->getVertexList()[0];
+                if (!changeColumn && columnX <= this->_pos.x){
                     float x;
-                    if(column->getVertexList()[0] == this->_pos.x){
+                    if(columnX == this->_pos.x){
                         x = this->_topRight.x;
                     }else{
-                        x = this->_topRight.x - (this->_pos.x - column->getVertexList()[0]);
+                        x = this->_topRight.x - (this->_pos.x - columnX);
                     }
 
                     column->setPositions(
@@ -221,7 +223,7 @@ namespace EasySDL
         _title(EasySDL::POPPINS_REGULAR, 64),
         _titlePos{0, 0} {
 
-            this->_titlePos = { this->_pos.x + (this->_width / 2), this->_pos.y + this->_height + 10};
+            this->_titlePos = { this->_pos.x + (this->_width / 2), this->_pos.y + this->_height + 15};
             this->_updateBoundaries();
             this->_createBorder();
             this->_createLimitsInfo();
@@ -238,7 +240,7 @@ namespace EasySDL
             for(auto& column: this->_columns) { column->setup(); }
         }
 
-        void draw(EasySDL::Window *w)
+        void draw(EasySDL::Window *w) override
         {
             this->_title.draw(w);
             this->_drawBorder(w);
@@ -318,9 +320,7 @@ namespace EasySDL
         }
 
         // CHART LIMITS
-        void setStep(float step){ 
-            this->_step = step;
-        }
+        void setStep(float step){  this->_step = step; }
         float getStep(){ return this->_step; }
         float getCurrentStep(){ return this->_currentStep; }
         void setDomain(float x0, float x1){

@@ -28,17 +28,9 @@ namespace EasySDL
             return anguloRad;
         }
 
-        void operator+(const Vec2 &other)
-        {
-            this->x += other.x;
-            this->y += other.y;
-        }
-
-        void operator*(float scalar)
-        {
-            this->x *= scalar;
-            this->y *= scalar;
-        }
+        EasySDL::Vec2 operator+(const Vec2 &other) const { return {this->x + other.x, this->y + other.y}; }
+        EasySDL::Vec2 operator-(const Vec2 &other) const { return {this->x - other.x, this->y - other.y}; }
+        EasySDL::Vec2 operator*(float scalar)      const { return {this->x * scalar, this->y * scalar}; }
     };
 
 }

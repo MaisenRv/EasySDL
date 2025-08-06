@@ -1,6 +1,6 @@
 #pragma once
 #include "./Line.hpp"
-#include "../../types/Vec2.hpp"
+#include "../../../../Math/types/Vec2.hpp"
 #include <iostream>
 #include <cstdio>
 #include <cmath>
@@ -31,7 +31,7 @@ namespace EasySDL
             EasySDL::Vec2 p1{x1, y1};
             this->_angle = p0.angle(p1);
         }
-        virtual void draw(EasySDL::Window *w)
+        void draw(EasySDL::Window *w) override
         {
             this->_calculateVertex(this->_vertexList[0], this->_vertexList[1]);
             glBindBuffer(GL_ARRAY_BUFFER, w->VBO);
@@ -49,10 +49,6 @@ namespace EasySDL
             glBindVertexArray(w->VAO);
             glLineWidth(this->_lineWidth);
             glDrawArrays(GL_LINES, 0, this->vertexCount);
-
-            // GL_LINES: dibuja segmentos independientes (dos vértices por línea).
-            // GL_LINE_STRIP: dibuja una línea continua uniendo todos los vértices.
-            // GL_LINE_LOOP: similar a LINE_STRIP, pero conectando el último vértice con el primero
         }
         void update(float x0, float y0)
         {

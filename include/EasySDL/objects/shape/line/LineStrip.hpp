@@ -1,8 +1,9 @@
 #pragma once
-#include "../../Window.hpp"
-#include "../../utils/shadersUtils.hpp"
-#include "../../utils/pathList.hpp"
-#include "../../types/Vec2.hpp"
+#include "../../../Window.hpp"
+#include "../../../utils/shadersUtils.hpp"
+#include "../../../utils/pathList.hpp"
+#include "../../../../Math/types/Vec2.hpp"
+#include "../shape.hpp"
 #include <vector>
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
@@ -10,31 +11,20 @@
 
 namespace EasySDL
 {
-    class LineStrip
+    class LineStrip : public EasySDL::Shape
     {
     protected:
         // Line info
         GLfloat _lineWidth;
-        float _color[4] = {1.0f, 1.0f, 1.0f, 1.0f};
-
-        //  Vertex info
-        std::vector<float> _vertexList;
-
-        // Shader info
-        GLuint _vertexSrc;
-        GLuint _fragmentSrc;
 
         // Shift shader
         GLuint _shiftVBO;
         GLuint _shiftProgram;
 
     public:
-        GLuint program;
-        int vertexCount;
-
         LineStrip(GLfloat lineWidth) : _lineWidth(lineWidth) {}
 
-        void draw(EasySDL::Window *w)
+        void draw(EasySDL::Window *w) override
         {
             this->vertexCount = (int)(this->_vertexList.size() / 2);
             if (this->vertexCount == 0) return;
@@ -176,13 +166,6 @@ namespace EasySDL
         }
 
         //-------------------- Getters and setters
-        void setColor(const float (&NewColor)[4])
-        {
-            for (size_t i = 0; i < 4; i++)
-            {
-                this->_color[i] = NewColor[i];
-            }
-        }
 
         int getVertexSize()
         {

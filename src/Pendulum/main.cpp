@@ -1,9 +1,9 @@
 
 #include "../../include/EasySDL/Window.hpp"
-#include "../../include/EasySDL/objects/particle/Particle.hpp"
-#include "../../include/EasySDL/objects/line/ConstraintLine.hpp"
+#include "../../include/EasySDL/objects/shape/particle/Particle.hpp"
+#include "../../include/EasySDL/objects/shape/line/ConstraintLine.hpp"
 #include "../../include/EasySDL/objects/text/Text.hpp"
-#include "../../include/EasySDL/utils/pathList.hpp"
+#include "../../include/EasySDL/utils/colors.hpp"
 #include "../../include/EasySDL/objects/chart/LineChart.hpp"
 
 #include "../../include/Math/models/Pendulum.hpp"

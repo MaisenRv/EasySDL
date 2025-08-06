@@ -1,32 +1,26 @@
 #pragma once
-#include "../../types/Vec2.hpp"
-#include "../../utils/shadersUtils.hpp"
-#include "../../utils/pathList.hpp"
-#include "../../Window.hpp"
+#include "../../../../Math/types/Vec2.hpp"
+#include "../../../utils/shadersUtils.hpp"
+#include "../../../utils/pathList.hpp"
+#include "../../../Window.hpp"
+#include "../shape.hpp"
 #include <vector>
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
 
 namespace EasySDL
 {
-    class Particle
+    class Particle : public EasySDL::Shape
     {
     private:
         // Particle info
         float _size;
         int _resolution;
         EasySDL::Vec2 _position;
-        float _color[4] = {1.0f,1.0f,1.0f,1.0f};
         EasySDL::Vec2 _vel;
         EasySDL::Vec2 _as;
         float _mass;
 
-        //  Vertex info
-        std::vector<float> _vertexList;
-
-        // Shader info
-        GLuint _vertexSrc;
-        GLuint _fragmentSrc;
 
         void calculateVertex()
         {
@@ -48,13 +42,10 @@ namespace EasySDL
         }
 
     public:
-        GLuint program;
-        int vertexCount;
-
         Particle(float x, float y, float size, int resolution) : _position{x, y}, _size(size), _resolution(resolution)
         {};
 
-        void draw(EasySDL::Window *w)
+        void draw(EasySDL::Window *w) override
         {
             this->calculateVertex();
             this->vertexCount = this->_vertexList.size() / 2;
@@ -100,13 +91,6 @@ namespace EasySDL
         }
 
         //-------------------- Getters and setters
-        void setColor(const float (&NewColor)[4])
-        {
-            for (size_t i = 0; i < 4; i++)
-            {
-                this->_color[i] = NewColor[i];
-            }
-        }
 
         EasySDL::Vec2 getPos(){
             return this->_position;
