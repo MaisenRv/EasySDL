@@ -17,8 +17,6 @@ namespace EasySDL
         float _size;
         int _resolution;
         EasySDL::Vec2 _position;
-        EasySDL::Vec2 _vel;
-        EasySDL::Vec2 _as;
         float _mass;
 
 
@@ -41,9 +39,18 @@ namespace EasySDL
             }
         }
 
+        void _onSetup() override {
+            this->_vertexSrc = EasySDL::compileShader(GL_VERTEX_SHADER, EasySDL::BASIC_VERTEX_SHADER_PATH);
+            this->_fragmentSrc = EasySDL::compileShader(GL_FRAGMENT_SHADER, EasySDL::BASIC_FRAGMENT_SHADER_PATH);
+            this->program = glCreateProgram();
+            glAttachShader(program, this->_vertexSrc);
+            glAttachShader(program, this->_fragmentSrc);
+            glLinkProgram(program);
+        }
+
     public:
-        Particle(float x, float y, float size, int resolution) : _position{x, y}, _size(size), _resolution(resolution)
-        {};
+        Particle(): _position{0, 0}, _size(5),_resolution(20){};
+        Particle(float x, float y, float size, int resolution) : _position{x, y}, _size(size), _resolution(resolution){};
 
         void draw(EasySDL::Window *w) override
         {
@@ -69,15 +76,7 @@ namespace EasySDL
             glDrawArrays(GL_TRIANGLE_FAN, 0, this->vertexCount);
         }
 
-        void setup()
-        {
-            this->_vertexSrc = EasySDL::compileShader(GL_VERTEX_SHADER, EasySDL::BASIC_VERTEX_SHADER_PATH);
-            this->_fragmentSrc = EasySDL::compileShader(GL_FRAGMENT_SHADER, EasySDL::BASIC_FRAGMENT_SHADER_PATH);
-            this->program = glCreateProgram();
-            glAttachShader(program, this->_vertexSrc);
-            glAttachShader(program, this->_fragmentSrc);
-            glLinkProgram(program);
-        }
+
 
         void update()
         {

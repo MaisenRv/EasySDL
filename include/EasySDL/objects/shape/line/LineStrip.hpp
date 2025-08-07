@@ -21,31 +21,8 @@ namespace EasySDL
         GLuint _shiftVBO;
         GLuint _shiftProgram;
 
-    public:
-        LineStrip(GLfloat lineWidth) : _lineWidth(lineWidth) {}
 
-        void draw(EasySDL::Window *w) override
-        {
-            this->vertexCount = (int)(this->_vertexList.size() / 2);
-            if (this->vertexCount == 0) return;
-
-            glBindBuffer(GL_ARRAY_BUFFER, w->VBO);
-            glBufferData(
-                GL_ARRAY_BUFFER,
-                this->_vertexList.size() * sizeof(float),
-                this->_vertexList.data(),
-                GL_DYNAMIC_DRAW);
-
-            GLint loc = glGetUniformLocation(this->program, "u_WindowSize");
-            GLint colorLoc = glGetUniformLocation(this->program, "u_Color"); // Color
-            glUseProgram(this->program);
-            glUniform2f(loc, (float)w->getWidth(), (float)w->getHeight());
-            glUniform4f(colorLoc, this->_color[0], this->_color[1], this->_color[2], this->_color[3]);
-            glBindVertexArray(w->VAO);
-            glLineWidth(this->_lineWidth);
-            glDrawArrays(GL_LINE_STRIP, 0, this->vertexCount);
-        }
-        void setup()
+        void _onSetup() override
         {
             this->_vertexSrc = EasySDL::compileShader(GL_VERTEX_SHADER, EasySDL::BASIC_VERTEX_SHADER_PATH);
             this->_fragmentSrc = EasySDL::compileShader(GL_FRAGMENT_SHADER, EasySDL::BASIC_FRAGMENT_SHADER_PATH);
@@ -76,6 +53,32 @@ namespace EasySDL
             glLinkProgram(this->_shiftProgram);
             glDeleteShader(shiftVertex);
         }
+
+    public:
+        LineStrip(GLfloat lineWidth) : _lineWidth(lineWidth) {}
+
+        void draw(EasySDL::Window *w) override
+        {
+            this->vertexCount = (int)(this->_vertexList.size() / 2);
+            if (this->vertexCount == 0) return;
+
+            glBindBuffer(GL_ARRAY_BUFFER, w->VBO);
+            glBufferData(
+                GL_ARRAY_BUFFER,
+                this->_vertexList.size() * sizeof(float),
+                this->_vertexList.data(),
+                GL_DYNAMIC_DRAW);
+
+            GLint loc = glGetUniformLocation(this->program, "u_WindowSize");
+            GLint colorLoc = glGetUniformLocation(this->program, "u_Color"); // Color
+            glUseProgram(this->program);
+            glUniform2f(loc, (float)w->getWidth(), (float)w->getHeight());
+            glUniform4f(colorLoc, this->_color[0], this->_color[1], this->_color[2], this->_color[3]);
+            glBindVertexArray(w->VAO);
+            glLineWidth(this->_lineWidth);
+            glDrawArrays(GL_LINE_STRIP, 0, this->vertexCount);
+        }
+
 
         void addPoint(Vec2 point)
         {

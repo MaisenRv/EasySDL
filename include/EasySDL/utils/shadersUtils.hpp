@@ -7,7 +7,7 @@
 
 namespace EasySDL
 {
-    std::string readShader(const std::string &path)
+    inline std::string readShader(const std::string &path)
     {
         std::ifstream f(path);
         std::stringstream buf;

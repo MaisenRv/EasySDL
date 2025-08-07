@@ -36,7 +36,11 @@ void setup(){
     c.setStep(0.0111);
     c.setRange(-4.0f,1.0f);
     c.setDomain(0.0f,3.0f);
+    // c.setShowTitle(false);
+    // c.setShowGrid(false);
+    // c.setShowBorder(false);
     c.setup();
+    
 
     fps.setPos({25,20});
     fps.setScale(0.5);
@@ -46,7 +50,6 @@ void draw(){
     line.draw(w);
     point.draw(w);
     pMass.draw(w);
-
     float angle = pendulum.calculateAngleNextIteration();
     line.setAngle(angle);
     pMass.setPos(line.getPosPoint2());
@@ -54,7 +57,7 @@ void draw(){
         {"angle", angle}
     },w);
     c.draw(w);
-    fps.setMessage(EasySDL::floatFormat(w->getFPS(),2));
+    fps.setMessage(EasySDL::floatFormat(w->getFPS(),1));
     fps.draw(w);
 }
 

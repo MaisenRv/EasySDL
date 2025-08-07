@@ -25,6 +25,16 @@ namespace EasySDL
             this->_vertexList.push_back(y1);
         }
 
+        void _onSetup() override
+        {
+            this->_vertexSrc = EasySDL::compileShader(GL_VERTEX_SHADER, EasySDL::BASIC_VERTEX_SHADER_PATH);
+            this->_fragmentSrc = EasySDL::compileShader(GL_FRAGMENT_SHADER, EasySDL::BASIC_FRAGMENT_SHADER_PATH);
+            this->program = glCreateProgram();
+            glAttachShader(program, this->_vertexSrc);
+            glAttachShader(program, this->_fragmentSrc);
+            glLinkProgram(program);
+        }
+
     public:
         Line(float x0, float y0, float x1, float y1, GLfloat lineWidth) : _lineWidth(lineWidth)
         {
@@ -54,20 +64,6 @@ namespace EasySDL
             // GL_LINE_STRIP: dibuja una línea continua uniendo todos los vértices.
             // GL_LINE_LOOP: similar a LINE_STRIP, pero conectando el último vértice con el primero
         }
-        // void update(float x0, float y0, float x1, float y1){
-        //     this->_calculateVertex(x0,y0,x1,y1);
-        // }
-
-
-        void setup()
-        {
-            this->_vertexSrc = EasySDL::compileShader(GL_VERTEX_SHADER, EasySDL::BASIC_VERTEX_SHADER_PATH);
-            this->_fragmentSrc = EasySDL::compileShader(GL_FRAGMENT_SHADER, EasySDL::BASIC_FRAGMENT_SHADER_PATH);
-            this->program = glCreateProgram();
-            glAttachShader(program, this->_vertexSrc);
-            glAttachShader(program, this->_fragmentSrc);
-            glLinkProgram(program);
-        }
 
         ~Line()
         {
@@ -89,6 +85,9 @@ namespace EasySDL
 
         const std::vector<float>& getVertexList(){
             return this->_vertexList;
+        }
+        void setWidth(float width){
+            this->_lineWidth = width;
         }
 
     };
