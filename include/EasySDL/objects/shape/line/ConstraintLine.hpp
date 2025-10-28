@@ -86,5 +86,9 @@ namespace EasySDL
             return result;
         }
 
+        void setPosPoint1(EasySDL::Vec2 newPos){
+            this->_calculateVertex(newPos.x,newPos.y);
+        }
+
     };
 }

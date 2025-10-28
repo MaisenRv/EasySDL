@@ -3,7 +3,6 @@
 #include <GL/glew.h>
 #include <functional>
 #include <iostream>
-#include "../Math/constans/Constans.hpp"
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #include <emscripten/html5.h>
@@ -149,7 +148,6 @@ namespace EasySDL
                 this->_drawFn();
                 this->showFPS(); 
                 SDL_GL_SwapWindow(this->_win);
-                SDL_Delay(Math::DELAY_90_FPS);
             }
 #endif
         }
@@ -166,7 +164,6 @@ namespace EasySDL
                     emscripten_cancel_main_loop();
 #endif
                 }
-                SDL_Delay(Math::DELAY_90_FPS);
             }
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

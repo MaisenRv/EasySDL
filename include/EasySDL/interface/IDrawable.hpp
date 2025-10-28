@@ -1,7 +1,7 @@
 #pragma once
-#include "../Window.hpp"
 
 namespace EasySDL{
+    class Window;
     class IDrawable{
         public:
             virtual ~IDrawable() = default;

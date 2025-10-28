@@ -33,7 +33,7 @@ namespace EasySDL
                 for(auto& point: this->_points){ point.second->draw(w); }
             }
 
-            void addCurve(std::string name, GLfloat width, std::function<float(float)> f){
+            void addCurve(std::string name, GLfloat width, const std::function<float(float)> f){
                 this->_curves[name] = std::make_unique<EasySDL::LineStrip>(width);
                 this->_points[name] = std::make_unique<EasySDL::Particle>();
                 this->_updateBoundaries();
@@ -61,5 +61,14 @@ namespace EasySDL
                 curve->second->setColor(color);
                 point->second->setColor(color);
             }
+
+            void setPointPosition(const std::string name, const float x,const float y){
+                auto point = this->_points.find(name);
+                if (point == this->_points.end()) return;
+                point->second->setPos(
+                    this->_mapValueToPixelXY(x,y)
+                );
+            }
+
     };
 }

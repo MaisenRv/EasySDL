@@ -168,6 +168,10 @@ namespace EasySDL
             }
         }
 
+        void clearVertexList(){
+            this->_vertexList.clear();
+        }
+
         //-------------------- Getters and setters
 
         int getVertexSize()

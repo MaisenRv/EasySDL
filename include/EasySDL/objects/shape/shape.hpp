@@ -13,6 +13,7 @@ namespace EasySDL{
 
             //  Vertex info
             std::vector<float> _vertexList;
+            bool isCreatedVertex = false;
 
             // Shader info
             GLuint _vertexSrc = 0;

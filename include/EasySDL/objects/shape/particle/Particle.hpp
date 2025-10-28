@@ -49,7 +49,7 @@ namespace EasySDL
         }
 
     public:
-        Particle(): _position{0, 0}, _size(5),_resolution(20){};
+        Particle(): _position{0, 0}, _size(10),_resolution(20){};
         Particle(float x, float y, float size, int resolution) : _position{x, y}, _size(size), _resolution(resolution){};
 
         void draw(EasySDL::Window *w) override
