@@ -1,8 +1,9 @@
 #pragma once
-#include "../../../Window.hpp"
+// #include "../../../Window.hpp"
 #include "../../../utils/shadersUtils.hpp"
 #include "../../../utils/pathList.hpp"
 #include "../../../../Math/types/Vec2.hpp"
+#include "../../../interface/IWindow.hpp"
 #include "../shape.hpp"
 #include <vector>
 #include <SDL2/SDL.h>
@@ -57,7 +58,7 @@ namespace EasySDL
     public:
         LineStrip(GLfloat lineWidth) : _lineWidth(lineWidth) {}
 
-        void draw(EasySDL::Window *w) override
+        void draw(EasySDL::IWindow *w) override
         {
             this->vertexCount = (int)(this->_vertexList.size() / 2);
             if (this->vertexCount == 0) return;
@@ -101,7 +102,7 @@ namespace EasySDL
             }
         }
 
-        void shiftX(float delta,EasySDL::Window *w){
+        void shiftX(float delta,EasySDL::IWindow *w){
             // // 1) Recalcula cuántos vértices tenemos
             // vertexCount = static_cast<int>(_vertexList.size() / 2);
             // if (vertexCount == 0) return;

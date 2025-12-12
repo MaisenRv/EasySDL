@@ -2,6 +2,7 @@
 
 #include "../shape/line/LineStrip.hpp"
 #include "../shape/particle/Particle.hpp"
+#include "../../interface/IWindow.hpp"
 #include "Chart.hpp"
 #include <functional>
 
@@ -27,7 +28,7 @@ namespace EasySDL
                 this->setShowGrid(false);
             }
 
-            void draw(EasySDL::Window *w) override{
+            void draw(EasySDL::IWindow *w) override{
                 EasySDL::Chart::draw(w);
                 for(auto& curve: this->_curves){ curve.second->draw(w); }
                 for(auto& point: this->_points){ point.second->draw(w); }

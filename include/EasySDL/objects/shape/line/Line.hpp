@@ -1,7 +1,8 @@
 #pragma once
-#include "../../../Window.hpp"
+// #include "../../../Window.hpp"
 #include "../../../utils/shadersUtils.hpp"
 #include "../../../utils/pathList.hpp"
+#include "../../../interface/IWindow.hpp"
 #include "../shape.hpp"
 #include <vector>
 #include <SDL2/SDL.h>
@@ -42,7 +43,7 @@ namespace EasySDL
             this->_calculateVertex(x0,y0,x1,y1);
         }
 
-        void draw(EasySDL::Window *w) override
+        void draw(EasySDL::IWindow *w) override
         {
             glBindBuffer(GL_ARRAY_BUFFER, w->VBO);
             glBufferData(

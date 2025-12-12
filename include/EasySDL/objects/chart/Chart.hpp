@@ -6,6 +6,7 @@
 #include "../shape/line/Line.hpp"
 #include "../../utils/format.hpp"
 #include "../../interface/IInitializable.hpp"
+#include "../../interface/IWindow.hpp"
 #include <memory>
 #include <map>
 
@@ -167,12 +168,12 @@ namespace EasySDL
                 for(auto& column: this->_columns) { column->setColor({1,1,1,0.2}); }
             }
 
-            void _drawBorder(EasySDL::Window *w){
+            void _drawBorder(EasySDL::IWindow *w){
                 if(!this->_showBorder) return;
                 for(size_t i = 0 ; i < 4 ;i++) this->_border[i]->draw(w);
             }
 
-            virtual void _drawLimitsInfo(EasySDL::Window *w){
+            virtual void _drawLimitsInfo(EasySDL::IWindow *w){
                 this->_limitsInfo["x0"]->setMessage(EasySDL::floatFormat(this->_staticDomain[0],2));
                 this->_limitsInfo["x1"]->setMessage(EasySDL::floatFormat(this->_staticDomain[1],2));
                 this->_limitsInfo["y0"]->setMessage(EasySDL::floatFormat(this->_range[0],2));
@@ -180,7 +181,7 @@ namespace EasySDL
                 for(auto& limitInfo:this->_limitsInfo) limitInfo.second->draw(w);
             }
 
-            void _drawGrid(EasySDL::Window *w){
+            void _drawGrid(EasySDL::IWindow *w){
                 if(!this->_showGrid) return;
                 for(auto& row: this->_rows) { row->draw(w); }
                 for(auto& column: this->_columns) { column->draw(w); }
@@ -214,7 +215,7 @@ namespace EasySDL
             _title(EasySDL::POPPINS_REGULAR, 64),
             _titlePos{ this->_pos.x + (this->_width / 2), this->_pos.y + this->_height + 15}{}
 
-            void draw(EasySDL::Window *w) override {
+            void draw(EasySDL::IWindow *w) override {
                 if(this->_showTitle)  this->_title.draw(w);
                 
                 this->_drawBorder(w);

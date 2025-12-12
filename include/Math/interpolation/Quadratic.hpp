@@ -13,10 +13,10 @@ namespace EasySDL
         };
 
         static float easeInF(float t){ return t*t;}
-        static float easeOutF(float t){ return 1- powf32(1-t,2);}
+        static float easeOutF(float t){ return 1- powf(1-t,2);}
         static float easeInOutF(float t){ 
             if (t < 0.5) return 2*t*t;
-            else return 1 - 2 * powf32(1-t,2);
+            else return 1 - 2 * powf(1-t,2);
         }
 
         static float quadratic(const float start, const float end, const float t, TypeQuadraticInterpolation type) {

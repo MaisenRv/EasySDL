@@ -1,5 +1,5 @@
 
-#include "../../include/EasySDL/Window.hpp"
+// #include "../../include/EasySDL/Window.hpp"
 #include "../../include/EasySDL/objects/shape/line/ConstraintLine.hpp"
 #include "../../include/EasySDL/objects/shape/line/LineStrip.hpp"
 #include "../../include/EasySDL/utils/colors.hpp"
@@ -7,9 +7,10 @@
 #include "../../include/Math/types/FourierData.hpp"
 #include "../../include/Math/methods/DFT.hpp"
 #include "../../include/nlohmann/json.hpp"
+#include "../../include/EasySDL/WindowLocal.hpp"
 #include <cmath>
 
-EasySDL::Window *w = new EasySDL::Window(700, 700, "Presentacion");
+EasySDL::WindowLocal *w = new EasySDL::WindowLocal(700, 700, "Presentacion");
 EasySDL::LineStrip path(1);
 std::vector<std::unique_ptr<EasySDL::ContraintLine>> lines;
 std::vector<EasySDL::FourierData> result;
@@ -35,7 +36,7 @@ void setup()
 
     //--------------
     std::vector<EasySDL::Complex> data;
-    int skip = 2;
+    int skip = 4;
     //--------------
 
     // Ejemplo de recorrer un arreglo JSON

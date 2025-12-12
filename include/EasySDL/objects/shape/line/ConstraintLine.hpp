@@ -1,6 +1,7 @@
 #pragma once
 #include "./Line.hpp"
 #include "../../../../Math/types/Vec2.hpp"
+#include "../../../interface/IWindow.hpp"
 #include <iostream>
 #include <cstdio>
 #include <cmath>
@@ -31,7 +32,7 @@ namespace EasySDL
             EasySDL::Vec2 p1{x1, y1};
             this->_angle = p0.angle(p1);
         }
-        void draw(EasySDL::Window *w) override
+        void draw(EasySDL::IWindow *w) override
         {
             this->_calculateVertex(this->_vertexList[0], this->_vertexList[1]);
             glBindBuffer(GL_ARRAY_BUFFER, w->VBO);

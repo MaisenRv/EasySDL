@@ -6,8 +6,8 @@
 #include "../../utils/pathList.hpp"
 #include "../../../Math/types/Vec2.hpp"
 #include "../../utils/shadersUtils.hpp"
-#include "../../Window.hpp"
-
+// #include "../../Window.hpp"
+#include "../../interface/IWindow.hpp"
 
 #ifdef __EMSCRIPTEN__
 #include <SDL_ttf.h>
@@ -132,7 +132,7 @@ namespace EasySDL
             TTF_CloseFont(font);
         }
 
-        void draw(EasySDL::Window *w) override
+        void draw(EasySDL::IWindow *w) override
         {
             generateTexture(this->_message);
             updateVertices();

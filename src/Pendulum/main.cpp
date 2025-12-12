@@ -1,5 +1,6 @@
 
 #include "../../include/EasySDL/Window.hpp"
+// #include "../../include/EasySDL/WindowLocal.hpp"
 #include "../../include/EasySDL/objects/shape/particle/Particle.hpp"
 #include "../../include/EasySDL/objects/shape/line/ConstraintLine.hpp"
 #include "../../include/EasySDL/objects/text/Text.hpp"
@@ -15,7 +16,7 @@ EasySDL::Particle point(230, 250, 5, 50);
 EasySDL::ContraintLine line(230, 250, 200, 200, 2, 200);
 EasySDL::Particle pMass(230, 50, 20, 50);
 
-EasySDL::Text fps(EasySDL::POPPINS_REGULAR,16);
+// EasySDL::Text fps(EasySDL::POPPINS_REGULAR,16);
 
 Math::Pendulum pendulum(line.getAngle(),0,0,line.getLength(),0.0111);
 
@@ -42,8 +43,8 @@ void setup(){
     c.setup();
     
 
-    fps.setPos({25,20});
-    fps.setScale(0.5);
+    // fps.setPos({25,20});
+    // fps.setScale(0.5);
 }
 
 void draw(){
@@ -57,8 +58,8 @@ void draw(){
         {"angle", angle}
     },w);
     c.draw(w);
-    fps.setMessage(EasySDL::floatFormat(w->getFPS(),1));
-    fps.draw(w);
+    // fps.setMessage(EasySDL::floatFormat(w->getFPS(),1));
+    // fps.draw(w);
 }
 
 int main(){

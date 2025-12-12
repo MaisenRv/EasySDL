@@ -1,4 +1,5 @@
 #include "../../include/EasySDL/Window.hpp"
+
 #include <GL/glew.h>
 #include "../../include/EasySDL/utils/colors.hpp"
 #include "../../include/EasySDL/objects/shape/square/Square.hpp"

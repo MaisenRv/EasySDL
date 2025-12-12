@@ -2,7 +2,8 @@
 #include "../../../../Math/types/Vec2.hpp"
 #include "../../../utils/shadersUtils.hpp"
 #include "../../../utils/pathList.hpp"
-#include "../../../Window.hpp"
+// #include "../../../Window.hpp"
+#include "../../../interface/IWindow.hpp"
 #include "../shape.hpp"
 #include <vector>
 #include <SDL2/SDL.h>
@@ -52,7 +53,7 @@ namespace EasySDL
         Particle(): _position{0, 0}, _size(10),_resolution(20){};
         Particle(float x, float y, float size, int resolution) : _position{x, y}, _size(size), _resolution(resolution){};
 
-        void draw(EasySDL::Window *w) override
+        void draw(EasySDL::IWindow *w) override
         {
             this->calculateVertex();
             this->vertexCount = this->_vertexList.size() / 2;

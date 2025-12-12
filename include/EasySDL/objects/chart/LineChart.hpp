@@ -2,10 +2,11 @@
 #include "../shape/line/LineStrip.hpp"
 #include "../text/Text.hpp"
 #include "../../../Math/types/Vec2.hpp"
-#include "../../Window.hpp"
+// #include "../../Window.hpp"
 #include "../../utils/fonts.hpp"
 #include "../../utils/format.hpp"
 #include "../../../Math/constans/Constans.hpp"
+#include "../../interface/IWindow.hpp"
 #include "Chart.hpp"
 #include <string>
 #include <vector>
@@ -56,7 +57,7 @@ namespace EasySDL
             }
         }
         
-        void _drawLimitsInfo(EasySDL::Window *w) override {
+        void _drawLimitsInfo(EasySDL::IWindow *w) override {
             this->_limitsInfo["x0"]->setMessage(EasySDL::floatFormat(this->_dinamicDomain[0],2));
             this->_limitsInfo["x1"]->setMessage(EasySDL::floatFormat(this->_dinamicDomain[1],2));
             this->_limitsInfo["y0"]->setMessage(EasySDL::floatFormat(this->_range[0],2));
@@ -73,7 +74,7 @@ namespace EasySDL
 
 
 
-        void draw(EasySDL::Window *w) override {
+        void draw(EasySDL::IWindow *w) override {
             EasySDL::Chart::draw(w);
             for(auto& curve: this->_curves){ curve.second->draw(w); }
         }
@@ -84,7 +85,7 @@ namespace EasySDL
         //     {"humedad",      60.2f},
         //     {"presion",    1013.8f}
         // });
-        void addCoord(const std::map<std::string, float>& values,EasySDL::Window *w)
+        void addCoord(const std::map<std::string, float>& values,EasySDL::IWindow *w)
         {
             for(auto& [name,value]:values){
                 auto curve = this->_curves.find(name);

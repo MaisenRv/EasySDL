@@ -3,38 +3,25 @@
 #include <SDL2/SDL.h>
 #include <functional>
 #include <iostream>
+#include <GL/glew.h>
+#include <SDL2/SDL_ttf.h>
 
 #include "./interface/IWindow.hpp"
 #include "./utils/colors.hpp"
 
-#ifdef __EMSCRIPTEN__
-
-#include <emscripten.h>
-#include <emscripten/html5.h>
-#include <SDL_ttf.h>
-#include <GLES3/gl3.h>
-
-#else
-
-#include <GL/glew.h>
-
-#endif
-
 namespace EasySDL
 {
-    class Window : public EasySDL::IWindow
+    class WindowLocal : public EasySDL::IWindow
     {
     private:
         // Window properties
         const char *_title;
-        float _fps = 0;
         SDL_Window *_win;
         SDL_GLContext _context;
 
         std::function<void()> _setup;
 
-        std::function<void()> _drawFn; // WASM
-        bool _quit = false;            // WASM
+        std::function<void()> _drawFn;
 
         int prepareWindow() override
         {
@@ -43,19 +30,12 @@ namespace EasySDL
                 std::cerr << "Error al iniciar SDL: " << SDL_GetError() << std::endl;
                 return 1;
             }
-            TTF_Init();
-#ifdef __EMSCRIPTEN__
-            EmscriptenWebGLContextAttributes attrs;
-            emscripten_webgl_init_context_attributes(&attrs);
-            attrs.antialias = true;
-            EMSCRIPTEN_WEBGL_CONTEXT_HANDLE ctx = emscripten_webgl_create_context("#inter", &attrs);
-            emscripten_webgl_make_context_current(ctx);
-#endif
 
+            TTF_Init();
             // Settings OpenGL
             SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-            SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-            SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+            SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+            SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
             SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
             SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
             SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
@@ -69,31 +49,20 @@ namespace EasySDL
                 this->_height,
                 SDL_WINDOW_OPENGL);
 
-            if (!this->_win)
-            {
-                std::cerr << "SDL_CreateWindow failed: " << SDL_GetError() << std::endl;
-                return 1;
-            }
-
-
             this->_context = SDL_GL_CreateContext(this->_win);
-            if (!this->_context)
-            {
-                std::cerr << "SDL_GL_CreateContext failed: " << SDL_GetError() << std::endl;
-                return 1;
-            }
-
-            if (SDL_GL_MakeCurrent(this->_win, this->_context) != 0)
-            {
-                std::cerr << "SDL_GL_MakeCurrent failed: " << SDL_GetError() << std::endl;
-                return 1;
-            }
-
+            SDL_GL_MakeCurrent(this->_win, this->_context);
             SDL_GL_SetSwapInterval(1); // V‑Sync
-
+            glEnable(GL_LINE_SMOOTH);
+            glEnable(GL_MULTISAMPLE);
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+            glewExperimental = GL_TRUE;
+            if (glewInit() != GLEW_OK)
+            {
+                std::cerr << "Error inicializando GLEW\n";
+                return 1;
+            }
             glViewport(0, 0, this->_width, this->_height);
             return 0;
         }
@@ -114,20 +83,17 @@ namespace EasySDL
         }
 
     public:
-        Window(int width, int height, const char *title) : _title(title)
+        WindowLocal(int width, int height, const char *title) : _title(title)
         {
             this->_width = width;
             this->_height = height;
-// #ifdef __EMSCRIPTEN__
-//             SDL_SetHint(SDL_HINT_EMSCRIPTEN_CANVAS_SELECTOR, "#pendulum");
-// #endif
-
             this->prepareWindow();
             glClearColor(
                 DARK_BLUE_NORMALIZED[0],
                 DARK_BLUE_NORMALIZED[1],
                 DARK_BLUE_NORMALIZED[2],
-                DARK_BLUE_NORMALIZED[3]);
+                DARK_BLUE_NORMALIZED[3]
+            );          
             this->prepareGL();
         }
 
@@ -139,11 +105,6 @@ namespace EasySDL
 
             this->_drawFn = drawFn;
             // OPENGL SETUP
-
-#ifdef __EMSCRIPTEN__
-            // _instance = this; // WASM
-            emscripten_set_main_loop_arg(Window::mainLoopProxy, this, 0, 1);
-#else
 
             bool running = true;
             SDL_Event e;
@@ -163,44 +124,9 @@ namespace EasySDL
                 this->calFPS();
                 SDL_GL_SwapWindow(this->_win);
             }
-#endif
         }
 
-        void loopFrame()
-        {
-            SDL_Event event;
-            while (SDL_PollEvent(&event))
-            {
-                if (event.type == SDL_QUIT)
-                {
-                    this->_quit = true;
-#ifdef __EMSCRIPTEN__
-                    // no cancelar aquí; usar stop_loop desde JS si quieres un control explícito
-                    emscripten_cancel_main_loop();
-#endif
-                    
-                }
-                
-            }
-
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-            if (this->_drawFn)
-                this->_drawFn();
-
-            SDL_GL_SwapWindow(this->_win);
-        }
-
-        static void mainLoopProxy(void *arg)
-        {
-            Window *self = static_cast<Window *>(arg);
-            if (!self->_quit)
-            {
-                self->loopFrame();
-            }
-            
-        }
-        ~Window()
+        ~WindowLocal()
         {
             glDeleteVertexArrays(1, &(this->VAO));
             glDeleteBuffers(1, &(this->VBO));
@@ -208,7 +134,6 @@ namespace EasySDL
             SDL_DestroyWindow(this->_win);
             TTF_Quit();
             SDL_Quit();
-       
         }
     };
 }
