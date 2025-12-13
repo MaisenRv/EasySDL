@@ -11,7 +11,7 @@
 #include <cstdio>
 
 
-EasySDL::Window *w = new EasySDL::Window(900, 450, "Ventana");
+EasySDL::Window *w = new EasySDL::Window(900, 450, "Ventana","#");
 EasySDL::Square s3({225,225},200,200);
 EasySDL::StaticLineChart lc({460,25},400,400,"prueba");
 

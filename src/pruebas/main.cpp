@@ -8,7 +8,7 @@ extern "C"{
 
 int main()
 {
-    EasySDL::Window *w = new EasySDL::Window(600, 600, "Ventana");
+    EasySDL::Window *w = new EasySDL::Window(600, 600, "Ventana","#canvasName");
     static EasySDL::Line l(0,300,600,300,2);
     
     registerLine(&l);

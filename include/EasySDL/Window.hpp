@@ -31,6 +31,8 @@ namespace EasySDL
         SDL_Window *_win;
         SDL_GLContext _context;
 
+        const char *_canvasName;
+
         std::function<void()> _setup;
 
         std::function<void()> _drawFn; // WASM
@@ -48,7 +50,7 @@ namespace EasySDL
             EmscriptenWebGLContextAttributes attrs;
             emscripten_webgl_init_context_attributes(&attrs);
             attrs.antialias = true;
-            EMSCRIPTEN_WEBGL_CONTEXT_HANDLE ctx = emscripten_webgl_create_context("#inter", &attrs);
+            EMSCRIPTEN_WEBGL_CONTEXT_HANDLE ctx = emscripten_webgl_create_context(this->_canvasName, &attrs);
             emscripten_webgl_make_context_current(ctx);
 #endif
 
@@ -114,7 +116,7 @@ namespace EasySDL
         }
 
     public:
-        Window(int width, int height, const char *title) : _title(title)
+        Window(int width, int height, const char *title, const char* canvasName) : _title(title),_canvasName(canvasName)
         {
             this->_width = width;
             this->_height = height;

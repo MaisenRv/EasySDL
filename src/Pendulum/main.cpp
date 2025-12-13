@@ -11,7 +11,7 @@
 #include <cmath>
 
 
-EasySDL::Window *w = new EasySDL::Window(900, 450, "Pendulum");
+EasySDL::Window *w = new EasySDL::Window(900, 450, "Pendulum","#pendulum");
 EasySDL::Particle point(230, 250, 5, 50);
 EasySDL::ContraintLine line(230, 250, 200, 200, 2, 200);
 EasySDL::Particle pMass(230, 50, 20, 50);

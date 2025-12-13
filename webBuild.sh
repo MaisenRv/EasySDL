@@ -66,10 +66,14 @@ em++ $1 \
   -s ALLOW_MEMORY_GROWTH=1 \
   -s USE_WEBGL2=1 \
   -s MODULARIZE=1 \
-  -s EXPORT_NAME=Inter\
+  -s EXPORT_NAME=$2\
   --preload-file ./include/EasySDL/shaders/vertexShader.glsl \
   --preload-file ./include/EasySDL/shaders/fragmentShader.glsl \
   --preload-file ./include/EasySDL/shaders/vertexTextShader.glsl \
   --preload-file ./include/EasySDL/shaders/fragmentTextShader.glsl \
+  --preload-file ./include/EasySDL/shaders/shiftVertexShader.glsl \
   --preload-file ./include/EasySDL/objects/text/fonts/Poppins-Regular.ttf \
-  -o ./bin/web/Inter.js
+  -Iinclude \
+  -s EXPORTED_RUNTIME_METHODS="['cwrap','ccall']" \
+  -s EXPORTED_FUNCTIONS="['_main','_registerWindow','_getWindowWidth','_getWindowHeight']" \
+  -o ./bin/web/$2.js
