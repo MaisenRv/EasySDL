@@ -37,6 +37,7 @@ namespace EasySDL
             void addCurve(std::string name, GLfloat width, const std::function<float(float)> f){
                 this->_curves[name] = std::make_unique<EasySDL::LineStrip>(width);
                 this->_points[name] = std::make_unique<EasySDL::Particle>();
+                this->_points[name]->setDeformable(false);
                 this->_updateBoundaries();
                 bool setPointPos = true;
                 for(float i = this->_staticDomain[0]; i < this->_staticDomain[1]; i+=this->_step){
@@ -49,7 +50,6 @@ namespace EasySDL
                     }
                     this->_curves[name]->addPoint(position);
                 }
-
             }
 
         // -------- GETTERS SETTERS -------- 

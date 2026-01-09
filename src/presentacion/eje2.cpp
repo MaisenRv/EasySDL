@@ -1,6 +1,7 @@
 
 // #include "../../include/EasySDL/Window.hpp"
-#include "../../include/EasySDL/objects/shape/line/ConstraintLine.hpp"
+// #include "../../include/EasySDL/objects/shape/line/ConstraintLine.hpp"
+#include "../../include/EasySDL/objects/shape/line/Line.hpp"
 #include "../../include/EasySDL/objects/shape/line/LineStrip.hpp"
 #include "../../include/EasySDL/utils/colors.hpp"
 #include "../../include/Math/types/Complex.hpp"
@@ -12,7 +13,7 @@
 
 EasySDL::WindowLocal *w = new EasySDL::WindowLocal(700, 700, "Presentacion");
 EasySDL::LineStrip path(1);
-std::vector<std::unique_ptr<EasySDL::ContraintLine>> lines;
+std::vector<std::unique_ptr<EasySDL::Line>> lines;
 std::vector<EasySDL::FourierData> result;
 
 int currentStep;
@@ -22,7 +23,7 @@ float t = 0;
 void setup()
 {
     // ---------------------------------------------
-    std::ifstream archivo("./src/presentacion/albert_einstein.json");
+    std::ifstream archivo("./src/presentacion/cat.json");
 
     // Verificar si el archivo se abrió correctamente
     if (!archivo.is_open())
@@ -64,8 +65,9 @@ void setup()
     for (size_t i = 0; i < result.size(); i++)
     {
 
-        lines.push_back(std::make_unique<EasySDL::ContraintLine>(350, 350, 100, 100, 1, result[i].amplitude));
+        lines.push_back(std::make_unique<EasySDL::Line>(350, 350, 100, 100, 1));
         lines[i]->setAngle(result[i].phase);
+        lines[i]->setLength(result[i].amplitude);
         lines[i]->setup();
     }
     path.setColor(EasySDL::MINT_GREEN_NORMALIZED);

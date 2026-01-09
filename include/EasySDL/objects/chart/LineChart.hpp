@@ -35,23 +35,21 @@ namespace EasySDL
 
         void _updateChartGridColumns(){
             if(!this->_showGrid) return;
+
+            float shiftValue = this->_valueToPixelX(this->_step); 
             bool changeColumn = false;
+
             for(auto& column: this->_columns) { 
-                float shiftValue = this->_valueToPixelX(this->_step); 
                 column->shiftX(shiftValue);
-                float columnX = column->getVertexList()[0];
-                if (!changeColumn && columnX <= this->_pos.x){
+                EasySDL::Vec2 pos = column->getPosition();
+                if (!changeColumn && pos.x <= this->_pos.x){
                     float x;
-                    if(columnX == this->_pos.x){
+                    if(pos.x == this->_pos.x){
                         x = this->_topRight.x;
                     }else{
-                        x = this->_topRight.x - (this->_pos.x - columnX);
+                        x = this->_topRight.x - (this->_pos.x - pos.x);
                     }
-
-                    column->setPositions(
-                        x, this->_topRight.y,
-                        x, this->_bottomRight.y
-                    );
+                    column->setPos({x,this->_topRight.y});
                     changeColumn = true;
                 }
             }
@@ -95,7 +93,7 @@ namespace EasySDL
                 if(this->_overflowDomain){
                     curve->second->removeFirstPoint();
                     curve->second->shiftX(this->_valueToPixelX(this->_step),w);
-                    newX = this->_topRight.x;
+                    newX = this->_mapValueToPixelX(this->_currentStep);
                 }
 
                 if(!this->_overflowDomain){
@@ -115,6 +113,7 @@ namespace EasySDL
                 this->_updateChartGridColumns();
             };
             this->_currentStep += this->_step;
+            
         }
 
         void addCurve(std::string name, GLfloat width){

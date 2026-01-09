@@ -2,6 +2,7 @@
 // #include "../../../Window.hpp"
 #include "../../../utils/shadersUtils.hpp"
 #include "../../../utils/pathList.hpp"
+#include "../../../types/lineAttachmentTypes.hpp"
 #include "../../../interface/IWindow.hpp"
 #include "../shape.hpp"
 #include <vector>
@@ -15,19 +16,52 @@ namespace EasySDL
     protected:
         // Line info
         GLfloat _lineWidth;
+        int _lineAttachType = EasySDL::ATTACH_P1;
+        float _length = 0;
+        float _coords[4] = {0,0,0,0};
 
 
-        void _calculateVertex(float x0, float y0, float x1, float y1)
+        void _calculateVertex()
         {
             this->_vertexList.clear();
-            this->_vertexList.push_back(x0);
-            this->_vertexList.push_back(y0);
-            this->_vertexList.push_back(x1);
-            this->_vertexList.push_back(y1);
+            EasySDL::Vec2 p0{this->_coords[0], this->_coords[1]};
+            EasySDL::Vec2 p1{this->_coords[2], this->_coords[3]};
+            this->_length = p0.distance(p1);
+
+            if(this->_lineAttachType == EasySDL::ATTACH_P2){
+                this->_vertexList.push_back(-this->_length);
+                this->_vertexList.push_back(0);
+                this->_vertexList.push_back(0);
+                this->_vertexList.push_back(0);
+                this->_angle = p1.angle(p0);
+                this->_position = p1;
+                return;
+            }
+
+            if(this->_lineAttachType == EasySDL::ATTACH_CENTER){
+                float halfLength = this->_length / 2;
+                this->_vertexList.push_back(-halfLength);
+                this->_vertexList.push_back(0);
+                this->_vertexList.push_back(halfLength);
+                this->_vertexList.push_back(0);
+                EasySDL::Vec2 center = p0.betweenPoint(p1);
+                this->_angle = center.angle(p1);
+                this->_position = center;
+                return;
+            }
+
+            this->_vertexList.push_back(0);
+            this->_vertexList.push_back(0);
+            this->_vertexList.push_back(this->_length);
+            this->_vertexList.push_back(0);
+            this->_angle = p0.angle(p1);
+            this->_position = p0;
         }
 
         void _onSetup() override
         {
+            
+            this->_createVAOAndVBO();
             this->_vertexSrc = EasySDL::compileShader(GL_VERTEX_SHADER, EasySDL::BASIC_VERTEX_SHADER_PATH);
             this->_fragmentSrc = EasySDL::compileShader(GL_FRAGMENT_SHADER, EasySDL::BASIC_FRAGMENT_SHADER_PATH);
             this->program = glCreateProgram();
@@ -40,55 +74,137 @@ namespace EasySDL
         Line(float x0, float y0, float x1, float y1, GLfloat lineWidth) : _lineWidth(lineWidth)
         {
             this->vertexCount = 2;
-            this->_calculateVertex(x0,y0,x1,y1);
+            this->_coords[0] = x0;
+            this->_coords[1] = y0;
+            this->_coords[2] = x1;
+            this->_coords[3] = y1;
+            this->_calculateVertex();
+            
         }
 
         void draw(EasySDL::IWindow *w) override
         {
-            glBindBuffer(GL_ARRAY_BUFFER, w->VBO);
-            glBufferData(
-                GL_ARRAY_BUFFER,
-                this->_vertexList.size() * sizeof(float),
-                this->_vertexList.data(),
-                GL_DYNAMIC_DRAW);
+            if(this->isDeformable && this->geometryDirty){
+                this->_calculateVertex();
+                this->_updateVertex();
+                this->geometryDirty = false;
+            }
 
-            GLint loc = glGetUniformLocation(this->program, "u_WindowSize");
-            GLint colorLoc = glGetUniformLocation(this->program, "u_Color"); // Color
             glUseProgram(this->program);
-            glUniform2f(loc, (float)w->getWidth(), (float)w->getHeight());
-            glUniform4f(colorLoc, this->_color[0], this->_color[1], this->_color[2], this->_color[3]);
-            glBindVertexArray(w->VAO);
-            glLineWidth(this->_lineWidth);
-            glDrawArrays(GL_LINES, 0, this->vertexCount);
+            GLint loc = glGetUniformLocation(this->program, "u_WindowSize");
+            GLint colorLoc = glGetUniformLocation(this->program, "u_Color"); 
+            GLint posLoc = glGetUniformLocation(this->program,"u_Position");
+            GLint angleLoc = glGetUniformLocation(this->program,"u_Rotation");
 
+
+            glUniform2f(loc, (float)w->getWidth(), (float)w->getHeight());
+            glUniform4f(colorLoc, _color[0], _color[1], _color[2], _color[3]);
+            glUniform2f(posLoc,this->_position.x,this->_position.y);
+            glUniform1f(angleLoc, this->_angle);
+
+            glBindVertexArray(this->shapeVAO);
+            glLineWidth(this->_lineWidth);
             // GL_LINES: dibuja segmentos independientes (dos vértices por línea).
             // GL_LINE_STRIP: dibuja una línea continua uniendo todos los vértices.
             // GL_LINE_LOOP: similar a LINE_STRIP, pero conectando el último vértice con el primero
+            glDrawArrays(GL_LINES, 0, this->vertexCount);
+           
         }
 
         ~Line()
         {
+            glDeleteProgram(this->program);
             glDeleteShader(this->_vertexSrc);
             glDeleteShader(this->_fragmentSrc);
+            glDeleteBuffers(1,&(this->shapeVBO));
+            glDeleteVertexArrays(1,&(this->shapeVAO));
         }
 
         void shiftX(float delta)
         {
-            for (size_t i = 0; i < this->_vertexList.size(); i += 2)
-            {
-                this->_vertexList[i] -= delta;
-            }
+            this->_position.x -= delta;
         }
         //-------------------- Getters and setters
         void setPositions(float x0, float y0, float x1, float y1){
-            this->_calculateVertex(x0,y0,x1,y1);
+            this->_coords[0] = x0;
+            this->_coords[1] = y0;
+            this->_coords[2] = x1;
+            this->_coords[3] = y1;
+            this->geometryDirty = true;
         }
+        
 
         const std::vector<float>& getVertexList(){
             return this->_vertexList;
         }
         void setWidth(float width){
             this->_lineWidth = width;
+        }
+
+        float getLength(){
+            return this->_length;
+        }
+
+        void setLength(float length){
+            float c = std::cos(_angle);
+            float s = std::sin(_angle);
+            float cl = c * length;
+            float sl = s * length;
+
+            if(this->_lineAttachType == EasySDL::ATTACH_P1){
+                float x = this->_coords[0] + cl;
+                float y = this->_coords[1] + sl;
+                this->_coords[2] = x;
+                this->_coords[3] = y;
+            }else if(this->_lineAttachType == EasySDL::ATTACH_P2){
+                float x = this->_coords[2] + cl;
+                float y = this->_coords[3] + sl;
+                this->_coords[0] = x;
+                this->_coords[1] = y;
+            }else if(this->_lineAttachType == EasySDL::ATTACH_CENTER){
+                float halfLength = length / 2;
+
+                float x0 = this->_coords[0] + (c * halfLength);
+                float y0 = this->_coords[1] + (s * halfLength);
+                float x1 = this->_coords[2] + (c * halfLength);
+                float y1 = this->_coords[3] + (s * halfLength);
+
+                this->setPositions(x0,y0,x1,y1);
+            }
+
+            this->geometryDirty = true;
+        }
+
+        EasySDL::Vec2 getPosPoint2(){
+            float c = std::cos(_angle);
+            float s = std::sin(_angle);
+
+            if(this->_lineAttachType == EasySDL::ATTACH_P2){
+                return {
+                    _position.x,
+                    _position.y
+                };
+            }else if(this->_lineAttachType == EasySDL::ATTACH_CENTER){
+                float halfLength = this->_length / 2;
+                return {
+                    _position.x + c * halfLength,
+                    _position.y + s * halfLength
+                };
+            }
+
+            return {
+                _position.x + c * _length,
+                _position.y + s * _length
+            };
+        }
+
+        void setLineAttachType(int attachType){
+            this->_lineAttachType = attachType;
+            this->geometryDirty = true;
+        }
+
+        void setPosPoint1( EasySDL::Vec2 pos){
+            this->_position = pos;
         }
 
     };

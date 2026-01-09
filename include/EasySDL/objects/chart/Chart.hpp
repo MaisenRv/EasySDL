@@ -114,7 +114,8 @@ namespace EasySDL
                 this->_border[0] = std::make_unique<EasySDL::Line>(this->_topLeft.x    ,this->_topLeft.y    ,this->_topRight.x   ,this->_topRight.y   ,1);
                 this->_border[1] = std::make_unique<EasySDL::Line>(this->_topRight.x   ,this->_topRight.y   ,this->_bottomRight.x,this->_bottomRight.y,1);
                 this->_border[2] = std::make_unique<EasySDL::Line>(this->_bottomRight.x,this->_bottomRight.y,this->_bottomLeft.x ,this->_bottomLeft.y ,1);
-                this->_border[3] = std::make_unique<EasySDL::Line>(this->_bottomLeft.x ,this->_bottomLeft.y ,this->_topLeft.x   ,this->_topLeft.y     ,1);   
+                this->_border[3] = std::make_unique<EasySDL::Line>(this->_bottomLeft.x ,this->_bottomLeft.y ,this->_topLeft.x   ,this->_topLeft.y     ,1);
+                for(size_t i = 0 ; i < 4 ;i++) this->_border[i]->setDeformable(false);
             }
 
             void _createLimitsInfo(){
@@ -147,6 +148,10 @@ namespace EasySDL
                     ));
                 }   
 
+                for(auto& row: this->_rows) {
+                    row->setDeformable(false);    
+                }            
+
                 int targetColumns;
                 if (this->_width <= 200)       targetColumns = 5;
                 else if (this->_width <= 500)  targetColumns = 8;
@@ -163,6 +168,10 @@ namespace EasySDL
                         1
                     ));
                 } 
+
+                for(auto& column: this->_columns) {
+                    column->setDeformable(false);    
+                }     
 
                 for(auto& row: this->_rows) { row->setColor({1,1,1,0.2}); }
                 for(auto& column: this->_columns) { column->setColor({1,1,1,0.2}); }

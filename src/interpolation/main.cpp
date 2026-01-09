@@ -1,4 +1,5 @@
-#include "../../include/EasySDL/Window.hpp"
+// #include "../../include/EasySDL/Window.hpp"
+#include "../../include/EasySDL/WindowLocal.hpp"
 
 #include <GL/glew.h>
 #include "../../include/EasySDL/utils/colors.hpp"
@@ -11,7 +12,7 @@
 #include <cstdio>
 
 
-EasySDL::Window *w = new EasySDL::Window(900, 450, "Ventana","#");
+EasySDL::WindowLocal *w = new EasySDL::WindowLocal(900, 450, "Ventana");
 EasySDL::Square s3({225,225},200,200);
 EasySDL::StaticLineChart lc({460,25},400,400,"prueba");
 
