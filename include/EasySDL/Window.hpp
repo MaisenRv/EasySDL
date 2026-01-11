@@ -46,14 +46,6 @@ namespace EasySDL
                 return 1;
             }
             TTF_Init();
-#ifdef __EMSCRIPTEN__
-            EmscriptenWebGLContextAttributes attrs;
-            emscripten_webgl_init_context_attributes(&attrs);
-            attrs.antialias = true;
-            EMSCRIPTEN_WEBGL_CONTEXT_HANDLE ctx = emscripten_webgl_create_context(this->_canvasName, &attrs);
-            emscripten_webgl_make_context_current(ctx);
-#endif
-
             // Settings OpenGL
             SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
             SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
@@ -76,7 +68,6 @@ namespace EasySDL
                 std::cerr << "SDL_CreateWindow failed: " << SDL_GetError() << std::endl;
                 return 1;
             }
-
 
             this->_context = SDL_GL_CreateContext(this->_win);
             if (!this->_context)
@@ -116,75 +107,48 @@ namespace EasySDL
         }
 
     public:
-        Window(int width, int height, const char *title, const char* canvasName) : _title(title),_canvasName(canvasName)
+        Window(int width, int height, const char *title, const char *canvasName) : _title(title), _canvasName(canvasName)
         {
             this->_width = width;
             this->_height = height;
-// #ifdef __EMSCRIPTEN__
-//             SDL_SetHint(SDL_HINT_EMSCRIPTEN_CANVAS_SELECTOR, "#pendulum");
-// #endif
 
             this->prepareWindow();
+            this->prepareGL();
             glClearColor(
                 DARK_BLUE_NORMALIZED[0],
                 DARK_BLUE_NORMALIZED[1],
                 DARK_BLUE_NORMALIZED[2],
                 DARK_BLUE_NORMALIZED[3]);
-            this->prepareGL();
         }
 
         void start(std::function<void()> drawFn, std::function<void()> setup) override
         {
-
             this->_setup = setup;
             this->_setup();
-
             this->_drawFn = drawFn;
             // OPENGL SETUP
 
 #ifdef __EMSCRIPTEN__
             // _instance = this; // WASM
             emscripten_set_main_loop_arg(Window::mainLoopProxy, this, 0, 1);
-#else
-
-            bool running = true;
-            SDL_Event e;
-            while (running)
-            {
-                while (SDL_PollEvent(&e))
-                {
-                    if (e.type == SDL_QUIT)
-                        running = false;
-                    // Other events
-                }
-
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-                // DRAW
-                this->_drawFn();
-                this->calFPS();
-                SDL_GL_SwapWindow(this->_win);
-            }
 #endif
         }
 
         void loopFrame()
         {
-            SDL_Event event;
-            while (SDL_PollEvent(&event))
+            SDL_Event e;
+            while (SDL_PollEvent(&e))
             {
-                if (event.type == SDL_QUIT)
+                if (e.type == SDL_QUIT)
                 {
                     this->_quit = true;
 #ifdef __EMSCRIPTEN__
                     // no cancelar aquí; usar stop_loop desde JS si quieres un control explícito
                     emscripten_cancel_main_loop();
 #endif
-                    
                 }
                 
             }
-
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             if (this->_drawFn)
@@ -200,7 +164,6 @@ namespace EasySDL
             {
                 self->loopFrame();
             }
-            
         }
         ~Window()
         {
@@ -210,7 +173,6 @@ namespace EasySDL
             SDL_DestroyWindow(this->_win);
             TTF_Quit();
             SDL_Quit();
-       
         }
     };
 }

@@ -20,8 +20,8 @@ namespace EasySDL
         SDL_GLContext _context;
 
         std::function<void()> _setup;
-
         std::function<void()> _drawFn;
+
 
         int prepareWindow() override
         {
@@ -114,7 +114,27 @@ namespace EasySDL
                 {
                     if (e.type == SDL_QUIT)
                         running = false;
-                    // Other events
+                    if (e.type == SDL_MOUSEMOTION)
+                    {
+                        this->_mouseState.x = e.motion.x;
+                        this->_mouseState.y = e.motion.y;
+                    }
+
+                    if (e.type == SDL_MOUSEBUTTONDOWN)
+                    {
+                        if (e.button.button == SDL_BUTTON_LEFT)
+                            this->_mouseState.leftDown = true;
+                        if (e.button.button == SDL_BUTTON_RIGHT)
+                            this->_mouseState.rightDown = true;
+                    }
+
+                    if (e.type == SDL_MOUSEBUTTONUP)
+                    {
+                        if (e.button.button == SDL_BUTTON_LEFT)
+                            this->_mouseState.leftDown = false;
+                        if (e.button.button == SDL_BUTTON_RIGHT)
+                            this->_mouseState.rightDown = false;
+                    }
                 }
 
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -123,6 +143,7 @@ namespace EasySDL
                 this->_drawFn();
                 this->calFPS();
                 SDL_GL_SwapWindow(this->_win);
+                
             }
         }
 
