@@ -42,9 +42,6 @@ void setup(){
     c.setStep(0.0111);
     c.setRange(-4.0f,1.0f);
     c.setDomain(0.0f,3.0f);
-    // c.setShowTitle(false);
-    // c.setShowGrid(false);
-    // c.setShowBorder(false);
     c.setup();
     
 
@@ -53,6 +50,8 @@ void setup(){
 }
 
 void draw(){
+    fps.setMessage(EasySDL::floatFormat(w->getFPS(),1));
+    fps.draw(w);
     line.draw(w);
     point.draw(w);
     pMass.draw(w);
@@ -63,8 +62,7 @@ void draw(){
         {"angle", angle}
     },w);
     c.draw(w);
-    fps.setMessage(EasySDL::floatFormat(w->getFPS(),1));
-    fps.draw(w);
+    
 }
 
 int main(){

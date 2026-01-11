@@ -37,5 +37,21 @@ extern "C"{
         return 0;
     }
 
+    void setPositionMouse(float x, float y){
+        windowWeb->setPositionMouse(x,y);
+    }
+
+    void setClick(int button, bool click){
+        if (button == 0){
+            windowWeb->setLeftClick(click);
+        }
+        if (button == 2){
+            windowWeb->setRightClick(click);
+        }
+        
+    }
+
+    
+
 #endif
 }

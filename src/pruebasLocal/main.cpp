@@ -1,27 +1,29 @@
 #include "../../include/EasySDL/WindowLocal.hpp"
-
-#include "../../include/EasySDL/objects/shape/particle/Particle.hpp"
-#include "../../include/EasySDL/objects/shape/line/Line.hpp"
+#include "../../include/EasySDL/utils/colors.hpp"
+#include "../../include/EasySDL/objects/shape/square/RoundedRectangle.hpp"
 
 EasySDL::WindowLocal *w = new EasySDL::WindowLocal(600, 600, "WindowName");
-int resolution = 40;
-EasySDL::Particle p(300,325,5,resolution);
-EasySDL::Line l(300,250,300,400,2);
-
-float t = 0;
-
+EasySDL::RoundedRectagle r({300,300},100,50,10,9);
 void setup(){
-    p.setup();
-    l.setup();
+  r.setup();
+  r.setDeformable(false);
 };
 
+float t = 0;
 void draw(){
-    t+=0.04f;
-    l.setAngle(t);
-    p.draw(w);
-    l.draw(w);
-    
-    
+    r.setPos({
+        w->getMouseState().x,
+        w->getHeight() - w->getMouseState().y
+    });
+    if(w->getMouseState().leftDown){
+        r.setColor(EasySDL::RED_PINKY_NORMALIZED);
+    }else if(w->getMouseState().rightDown){
+        r.setColor(EasySDL::LIGHT_CYAN_NORMALIZED);
+    }else{
+        r.setColor(EasySDL::WHITE_NORMALIZED);
+    }
+
+    r.draw(w);
 }
 
 
