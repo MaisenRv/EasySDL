@@ -2,6 +2,8 @@
 #include <SDL2/SDL.h>
 #include <functional>
 #include <GL/glew.h>
+#include "../utils/mouseState.hpp"
+
 namespace EasySDL
 {
     class IWindow
@@ -9,6 +11,7 @@ namespace EasySDL
     protected:
         int _width;
         int _height;
+        MouseState _mouseState;
     private:
         float _fps = 0;
         virtual int prepareWindow() = 0;
@@ -51,6 +54,23 @@ namespace EasySDL
         int getHeight()
         {
             return this->_height;
+        }
+
+        MouseState getMouseState(){
+            return this->_mouseState;
+        }
+        
+        void setPositionMouse(float x, float y){
+            this->_mouseState.x = x;
+            this->_mouseState.y = y;
+        }
+
+        void setLeftClick(bool click){
+            this->_mouseState.leftDown = click;
+        }
+
+        void setRightClick(bool click){
+            this->_mouseState.rightDown = click;
         }
     };
 }
