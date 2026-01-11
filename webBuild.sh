@@ -61,7 +61,6 @@ em++ $1 \
   -s WASM=1 \
   -s USE_SDL=2 \
   -s USE_SDL_TTF=2 \
-  -s MIN_WEBGL_VERSION=2 \
   -s MAX_WEBGL_VERSION=2 \
   -s ALLOW_MEMORY_GROWTH=1 \
   -s USE_WEBGL2=1 \
@@ -75,5 +74,5 @@ em++ $1 \
   --preload-file ./include/EasySDL/objects/text/fonts/Poppins-Regular.ttf \
   -Iinclude \
   -s EXPORTED_RUNTIME_METHODS="['cwrap','ccall']" \
-  -s EXPORTED_FUNCTIONS="['_main','_registerWindow','_getWindowWidth','_getWindowHeight']" \
+  -s EXPORTED_FUNCTIONS="['_main','_registerWindow','_getWindowWidth','_getWindowHeight','_setPositionMouse','_setClick']" \
   -o ./bin/web/$2.js
