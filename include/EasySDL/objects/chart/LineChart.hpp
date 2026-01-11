@@ -1,13 +1,12 @@
 #pragma once
-#include "../shape/line/LineStrip.hpp"
 #include "../text/Text.hpp"
 #include "../../../Math/types/Vec2.hpp"
-// #include "../../Window.hpp"
 #include "../../utils/fonts.hpp"
 #include "../../utils/format.hpp"
 #include "../../../Math/constans/Constans.hpp"
 #include "../../interface/IWindow.hpp"
 #include "Chart.hpp"
+#include "../shape/line/LineStrip.hpp"
 #include <string>
 #include <vector>
 #include <cmath>
@@ -23,7 +22,6 @@ namespace EasySDL
         std::map<std::string, std::unique_ptr<EasySDL::LineStrip>> _curves;
 
         // Chart limits
-        float _dinamicDomain[2] = {0.0f, 6.0f};
         float _step = 0.02f;
         float _currentStep = 0.0f;
         bool _overflowDomain = false;
@@ -74,7 +72,17 @@ namespace EasySDL
 
         void draw(EasySDL::IWindow *w) override {
             EasySDL::Chart::draw(w);
-            for(auto& curve: this->_curves){ curve.second->draw(w); }
+            for (auto& curve : this->_curves) {
+                curve.second->drawLineChart(
+                    w, 
+                    this->getDomainMin(),
+                    this->getDomainMax(),
+                    [&](float x, float y) -> EasySDL::Vec2 {
+                        return mapValueToPixelDinamicXY(x, y);
+                    }
+                );
+            }
+            // for(auto& curve: this->_curves){ curve.second->draw(w); }
         }
 
 
@@ -85,34 +93,63 @@ namespace EasySDL
         // });
         void addCoord(const std::map<std::string, float>& values,EasySDL::IWindow *w)
         {
-            for(auto& [name,value]:values){
+
+             for (auto& [name, value] : values)
+            {
                 auto curve = this->_curves.find(name);
-                if(curve == this->_curves.end()) continue;
+                if (curve == this->_curves.end()) continue;
+
+                // X lógico (tiempo)
+                float x = this->_currentStep;
+                float y = value;
                 
-                float newX;
-                if(this->_overflowDomain){
-                    curve->second->removeFirstPoint();
-                    curve->second->shiftX(this->_valueToPixelX(this->_step),w);
-                    newX = this->_mapValueToPixelX(this->_currentStep);
+
+                curve->second->addPointLineChart({x, y});
+                while (!curve->second->_points.empty() &&
+                curve->second->_points.front().x < _dinamicDomain[0])
+                {
+                    curve->second->_points.erase(curve->second->_points.begin());
                 }
-
-                if(!this->_overflowDomain){
-                    if(this->_currentStep >= this->_staticDomain[1]){
-                        newX = this->_topRight.x;
-                        this->_overflowDomain = true;
-                    }else{
-                        newX = this->_mapValueToPixelX(this->_currentStep);
-                    }
-                }     
-
-                float newY = this->_mapValueToPixelY(value);
-                curve->second->addPoint({newX, newY});
             }
-            if(this->_overflowDomain) {
-                this->_shiftDomain();
-                this->_updateChartGridColumns();
-            };
+
+            // mover dominio si hace falta
+            if (this->_currentStep > this->_dinamicDomain[1])
+            {
+                _shiftDomain();
+                _updateChartGridColumns();
+            }
+
             this->_currentStep += this->_step;
+            
+
+            // for(auto& [name,value]:values){
+            //     auto curve = this->_curves.find(name);
+            //     if(curve == this->_curves.end()) continue;
+                
+            //     float newX;
+            //     if(this->_overflowDomain){
+            //         curve->second->removeFirstPoint();
+            //         curve->second->shiftX(this->_valueToPixelX(this->_step),w);
+            //         newX = this->_mapValueToPixelX(this->_currentStep);
+            //     }
+
+            //     if(!this->_overflowDomain){
+            //         if(this->_currentStep >= this->_staticDomain[1]){
+            //             newX = this->_topRight.x;
+            //             this->_overflowDomain = true;
+            //         }else{
+            //             newX = this->_mapValueToPixelX(this->_currentStep);
+            //         }
+            //     }     
+
+            //     float newY = this->_mapValueToPixelY(value);
+            //     curve->second->addPoint({newX, newY});
+            // }
+            // if(this->_overflowDomain) {
+            //     this->_shiftDomain();
+            //     this->_updateChartGridColumns();
+            // };
+            // this->_currentStep += this->_step;
             
         }
 
@@ -133,6 +170,11 @@ namespace EasySDL
             this->_dinamicDomain[0] = x0;
             this->_dinamicDomain[1] = x1;
         }
+        void setRange(float y0, float y1) override{
+            EasySDL::Chart::setRange(y0,y1);
+            this->_dinamicRange[0] = y0;
+            this->_dinamicRange[1] = y1;
+        }
 
         // CURVES
         std::unique_ptr<EasySDL::LineStrip>& getCurve(std::string name){
@@ -143,6 +185,11 @@ namespace EasySDL
             if (curve == this->_curves.end()) return;
             curve->second->setColor(color);
         }
-
+        float getDomainMin(){
+            return this->_dinamicDomain[0];
+        }
+        float getDomainMax(){
+            return this->_dinamicDomain[1];
+        }
     };
 }

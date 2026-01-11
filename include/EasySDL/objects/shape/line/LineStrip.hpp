@@ -1,5 +1,4 @@
 #pragma once
-// #include "../../../Window.hpp"
 #include "../../../utils/shadersUtils.hpp"
 #include "../../../utils/pathList.hpp"
 #include "../../../../Math/types/Vec2.hpp"
@@ -12,11 +11,17 @@
 
 namespace EasySDL
 {
+ 
+    struct LogicalPoint {
+        double x;
+        double y;
+    };
     class LineStrip : public EasySDL::Shape
     {
     protected:
         // Line info
         GLfloat _lineWidth;
+        
 
         // Shift shader
         GLuint _shiftVBO;
@@ -35,6 +40,7 @@ namespace EasySDL
         }
 
     public:
+        std::vector<LogicalPoint> _points;
         LineStrip(GLfloat lineWidth) : _lineWidth(lineWidth) {}
 
         void draw(EasySDL::IWindow *w) override
@@ -62,6 +68,50 @@ namespace EasySDL
             glLineWidth(this->_lineWidth);
             glDrawArrays(GL_LINE_STRIP, 0, this->vertexCount);
         }
+        void drawLineChart(EasySDL::IWindow *w,float domainMin, float domainMax,std::function<Vec2(float,float)> map){
+            if (_points.empty()) return;
+            
+
+            rebuildVertices(domainMin,domainMax,map);
+
+            if (geometryDirty) {
+                _updateVertex();
+                geometryDirty = false;
+            }
+
+            glUseProgram(this->program);
+            GLint loc = glGetUniformLocation(this->program, "u_WindowSize");
+            GLint colorLoc = glGetUniformLocation(this->program, "u_Color"); // Color
+            GLint posLoc = glGetUniformLocation(this->program,"u_Position");
+            GLint angleLoc = glGetUniformLocation(this->program,"u_Rotation");
+
+            glUniform2f(loc, (float)w->getWidth(), (float)w->getHeight());
+            glUniform4f(colorLoc, this->_color[0], this->_color[1], this->_color[2], this->_color[3]);
+            glUniform2f(posLoc,this->_position.x,this->_position.y);
+            glUniform1f(angleLoc, this->_angle);
+
+            glBindVertexArray(this->shapeVAO);
+            glLineWidth(this->_lineWidth);
+            glDrawArrays(GL_LINE_STRIP, 0, this->vertexCount);
+
+        }
+
+        void rebuildVertices(float domainMin, float domainMax,std::function<Vec2(float,float)> map)
+        {
+            _vertexList.clear();
+            
+            for (auto& p : _points)
+            {
+                if (p.x < domainMin || p.x > domainMax)
+                    continue;
+
+                EasySDL::Vec2 pV(map(p.x,p.y));
+                _vertexList.push_back(pV.x);
+                _vertexList.push_back(pV.y);
+            }
+            this->vertexCount = (int)(this->_vertexList.size() / 2);
+            geometryDirty = true;
+        }
 
 
         void addPoint(Vec2 point)
@@ -69,6 +119,10 @@ namespace EasySDL
             this->_vertexList.push_back(point.x);
             this->_vertexList.push_back(point.y);
             this->geometryDirty = true;
+        }
+
+        void addPointLineChart(Vec2 point){
+            this->_points.push_back({point.x, point.y});
         }
 
         ~LineStrip()

@@ -41,7 +41,7 @@ namespace EasySDL
                 this->_updateBoundaries();
                 bool setPointPos = true;
                 for(float i = this->_staticDomain[0]; i < this->_staticDomain[1]; i+=this->_step){
-                    EasySDL::Vec2 position = this->_mapValueToPixelXY(i,f(i));
+                    EasySDL::Vec2 position = this->mapValueToPixelXY(i,f(i));
                   
                     if(position.y > this->_topLeft.y || position.y < this->_bottomLeft.y) continue;
                     if(setPointPos){
@@ -50,6 +50,7 @@ namespace EasySDL
                     }
                     this->_curves[name]->addPoint(position);
                 }
+                this->_curves[name]->setDeformable(false);
             }
 
         // -------- GETTERS SETTERS -------- 
@@ -67,7 +68,7 @@ namespace EasySDL
                 auto point = this->_points.find(name);
                 if (point == this->_points.end()) return;
                 point->second->setPos(
-                    this->_mapValueToPixelXY(x,y)
+                    this->mapValueToPixelXY(x,y)
                 );
             }
 

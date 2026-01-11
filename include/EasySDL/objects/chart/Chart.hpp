@@ -26,10 +26,16 @@ namespace EasySDL
             std::string _titleStr;
 
             // Chart limits
+            float _dinamicRange[2] = {-1.0f, 1.0f};
             float _range[2] = {-1.0f, 1.0f};
+            float _dinamicDomain[2] = {0.0f, 6.0f};
             float _staticDomain[2] = {0.0f, 6.0f};
+            float _domainLength = 0;
+            float _rangeLength = 0;
+
             std::map<std::string, std::unique_ptr<EasySDL::Text>> _limitsInfo;
             float _textScale = 0.4f;
+
 
             // Chart boundaries
             Vec2 _topLeft;
@@ -49,16 +55,27 @@ namespace EasySDL
 
 
             // Limits functions
-            float _calculateDomainLength() { return this->_staticDomain[1] - this->_staticDomain[0]; }
-            float _calculateRangeLength() { return this->_range[1] - this->_range[0]; }
+            void _calculateDomainLength() { 
+                this->_domainLength = this->_staticDomain[1] - this->_staticDomain[0]; 
+            }
+            void _calculateRangeLength() { 
+                this->_rangeLength = this->_range[1] - this->_range[0]; 
+            }
 
 
             // Outside the chart
             float _valueToPixelY(float value){
-                return ((value - this->_range[0]) / this->_calculateRangeLength()) * this->_height;
+                return ((value - this->_range[0]) / this->_rangeLength) * this->_height;
             }
+            float _valueToPixelDinamicY(float value){
+                return ((value - this->_dinamicRange[0]) / this->_rangeLength) * this->_height;
+            }
+
             float _valueToPixelX(float value){
-                return ((value - this->_staticDomain[0]) / this->_calculateDomainLength()) * this->_width;
+                return ((value - this->_staticDomain[0]) / this->_domainLength) * this->_width;
+            }
+            float _valueToPixelDinamicX(float value){
+                return ((value - this->_dinamicDomain[0]) / this->_domainLength) * this->_width;
             }
 
             // Inside the chart
@@ -69,9 +86,14 @@ namespace EasySDL
                 return this->_valueToPixelX(value) + this->_pos.x;
             }
 
-            Vec2 _mapValueToPixelXY(float valueX, float valueY){
-                return  {this->_mapValueToPixelX(valueX), this->_mapValueToPixelY(valueY)};
+            float _mapValueToPixelDinamicY(float value){ 
+                return this->_valueToPixelDinamicY(value) + this->_pos.y;
             }
+            float _mapValueToPixelDinamicX(float value){
+                return this->_valueToPixelDinamicX(value) + this->_pos.x;
+            }
+
+            
 
             float _niceNum(float x) {
                 float expv = std::floor(std::log10(x));    
@@ -135,8 +157,7 @@ namespace EasySDL
                 if (this->_height <= 200)       targetRows = 5;
                 else if (this->_height <= 500)  targetRows = 8;
                 else                            targetRows = 10;
-                float range = this->_calculateRangeLength();
-                float stepY = this->_niceNum(range / targetRows);
+                float stepY = this->_niceNum(this->_rangeLength / targetRows);
                 for(float i = this->_range[0]; i < this->_range[1]; i+= stepY){
                     float y = this->_mapValueToPixelY(i);
                     this->_rows.push_back(std::make_unique<EasySDL::Line>(
@@ -156,8 +177,7 @@ namespace EasySDL
                 if (this->_width <= 200)       targetColumns = 5;
                 else if (this->_width <= 500)  targetColumns = 8;
                 else                           targetColumns = 10;
-                float domain = this->_calculateDomainLength();
-                float stepX = this->_niceNum(domain / targetColumns);
+                float stepX = this->_niceNum(this->_domainLength / targetColumns);
                 for(float i = this->_staticDomain[0]; i < this->_staticDomain[1]; i+=stepX){
                     float x = this->_mapValueToPixelX(i);
                     this->_columns.push_back(std::make_unique<EasySDL::Line>(
@@ -222,7 +242,10 @@ namespace EasySDL
             _height(height),
             _titleStr(title),
             _title(EasySDL::POPPINS_REGULAR, 64),
-            _titlePos{ this->_pos.x + (this->_width / 2), this->_pos.y + this->_height + 15}{}
+            _titlePos{ this->_pos.x + (this->_width / 2), this->_pos.y + this->_height + 15}{
+                this->_calculateDomainLength();
+                this->_calculateRangeLength();
+            }
 
             void draw(EasySDL::IWindow *w) override {
                 if(this->_showTitle)  this->_title.draw(w);
@@ -232,6 +255,12 @@ namespace EasySDL
                 this->_drawLimitsInfo(w);
             }
 
+            Vec2 mapValueToPixelDinamicXY(float valueX, float valueY){
+                return  {this->_mapValueToPixelDinamicX(valueX), this->_mapValueToPixelDinamicY(valueY)};
+            }
+            Vec2 mapValueToPixelXY(float valueX, float valueY){
+                return  {this->_mapValueToPixelX(valueX), this->_mapValueToPixelY(valueY)};
+            }
         
         // -------- GETTERS SETTERS -------- 
             // CHART
@@ -262,10 +291,12 @@ namespace EasySDL
             virtual void setDomain(float x0, float x1){
                 this->_staticDomain[0] = x0;
                 this->_staticDomain[1] = x1;
+                this->_calculateDomainLength();
             }
             virtual void setRange(float y0, float y1){
                 this->_range[0] = y0;
                 this->_range[1] = y1;
+                this->_calculateRangeLength();
                 this->_createChartGrid();
             }
 
