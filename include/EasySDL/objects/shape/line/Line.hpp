@@ -95,12 +95,13 @@ namespace EasySDL
             GLint colorLoc = glGetUniformLocation(this->program, "u_Color"); 
             GLint posLoc = glGetUniformLocation(this->program,"u_Position");
             GLint angleLoc = glGetUniformLocation(this->program,"u_Rotation");
-
+            GLint scaleLoc = glGetUniformLocation(this->program,"u_Scale");
 
             glUniform2f(loc, (float)w->getWidth(), (float)w->getHeight());
             glUniform4f(colorLoc, _color[0], _color[1], _color[2], _color[3]);
             glUniform2f(posLoc,this->_position.x,this->_position.y);
             glUniform1f(angleLoc, this->_angle);
+            glUniform2f(scaleLoc,this->_scale.x,this->_scale.y);
 
             glBindVertexArray(this->shapeVAO);
             glLineWidth(this->_lineWidth);

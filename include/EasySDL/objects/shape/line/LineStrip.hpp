@@ -21,12 +21,6 @@ namespace EasySDL
     protected:
         // Line info
         GLfloat _lineWidth;
-        
-
-        // Shift shader
-        GLuint _shiftVBO;
-        GLuint _shiftProgram;
-
 
         void _onSetup() override
         {
@@ -58,11 +52,13 @@ namespace EasySDL
             GLint colorLoc = glGetUniformLocation(this->program, "u_Color"); // Color
             GLint posLoc = glGetUniformLocation(this->program,"u_Position");
             GLint angleLoc = glGetUniformLocation(this->program,"u_Rotation");
+            GLint scaleLoc = glGetUniformLocation(this->program,"u_Scale");
 
             glUniform2f(loc, (float)w->getWidth(), (float)w->getHeight());
             glUniform4f(colorLoc, this->_color[0], this->_color[1], this->_color[2], this->_color[3]);
             glUniform2f(posLoc,this->_position.x,this->_position.y);
             glUniform1f(angleLoc, this->_angle);
+            glUniform2f(scaleLoc,this->_scale.x,this->_scale.y);
 
             glBindVertexArray(this->shapeVAO);
             glLineWidth(this->_lineWidth);
@@ -71,7 +67,6 @@ namespace EasySDL
         void drawLineChart(EasySDL::IWindow *w,float domainMin, float domainMax,std::function<Vec2(float,float)> map){
             if (_points.empty()) return;
             
-
             rebuildVertices(domainMin,domainMax,map);
 
             if (geometryDirty) {
@@ -84,11 +79,13 @@ namespace EasySDL
             GLint colorLoc = glGetUniformLocation(this->program, "u_Color"); // Color
             GLint posLoc = glGetUniformLocation(this->program,"u_Position");
             GLint angleLoc = glGetUniformLocation(this->program,"u_Rotation");
+            GLint scaleLoc = glGetUniformLocation(this->program,"u_Scale");
 
             glUniform2f(loc, (float)w->getWidth(), (float)w->getHeight());
             glUniform4f(colorLoc, this->_color[0], this->_color[1], this->_color[2], this->_color[3]);
             glUniform2f(posLoc,this->_position.x,this->_position.y);
             glUniform1f(angleLoc, this->_angle);
+            glUniform2f(scaleLoc,this->_scale.x,this->_scale.y);
 
             glBindVertexArray(this->shapeVAO);
             glLineWidth(this->_lineWidth);

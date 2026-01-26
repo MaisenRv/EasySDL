@@ -82,7 +82,6 @@ namespace EasySDL
                     }
                 );
             }
-            // for(auto& curve: this->_curves){ curve.second->draw(w); }
         }
 
 
@@ -120,37 +119,6 @@ namespace EasySDL
             }
 
             this->_currentStep += this->_step;
-            
-
-            // for(auto& [name,value]:values){
-            //     auto curve = this->_curves.find(name);
-            //     if(curve == this->_curves.end()) continue;
-                
-            //     float newX;
-            //     if(this->_overflowDomain){
-            //         curve->second->removeFirstPoint();
-            //         curve->second->shiftX(this->_valueToPixelX(this->_step),w);
-            //         newX = this->_mapValueToPixelX(this->_currentStep);
-            //     }
-
-            //     if(!this->_overflowDomain){
-            //         if(this->_currentStep >= this->_staticDomain[1]){
-            //             newX = this->_topRight.x;
-            //             this->_overflowDomain = true;
-            //         }else{
-            //             newX = this->_mapValueToPixelX(this->_currentStep);
-            //         }
-            //     }     
-
-            //     float newY = this->_mapValueToPixelY(value);
-            //     curve->second->addPoint({newX, newY});
-            // }
-            // if(this->_overflowDomain) {
-            //     this->_shiftDomain();
-            //     this->_updateChartGridColumns();
-            // };
-            // this->_currentStep += this->_step;
-            
         }
 
         void addCurve(std::string name, GLfloat width){
@@ -191,5 +159,6 @@ namespace EasySDL
         float getDomainMax(){
             return this->_dinamicDomain[1];
         }
+
     };
 }

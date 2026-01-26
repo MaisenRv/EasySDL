@@ -13,12 +13,13 @@ namespace EasySDL
 {
     class RoundedRectagle : public EasySDL::Shape
     {
-        private:
+        protected:
             float _width;
             float _height;
             float _radius;
+        private:
             int _resolution;
-
+        
             void _calculateCorner(float delta, int cornerNumberVertex,int quadrant){
                 if(quadrant < 0 || quadrant > 4){
                     std::cerr << "NO existe el cuadrate: " << quadrant << std::endl;
@@ -104,7 +105,7 @@ namespace EasySDL
             {
                 this->_position = position;
             }
-            void draw(EasySDL::IWindow *w) override{
+            virtual void draw(EasySDL::IWindow *w) override{
                 if(this->isDeformable && this->geometryDirty){
                     this->_calculateVertex();
                     this->_updateVertex();
@@ -117,11 +118,13 @@ namespace EasySDL
                 GLint colorLoc = glGetUniformLocation(this->program, "u_Color"); 
                 GLint posLoc = glGetUniformLocation(this->program,"u_Position");
                 GLint angleLoc = glGetUniformLocation(this->program,"u_Rotation");
+                GLint scaleLoc = glGetUniformLocation(this->program,"u_Scale");
 
                 glUniform2f(loc, (float)w->getWidth(), (float)w->getHeight());
                 glUniform4f(colorLoc, _color[0], _color[1], _color[2], _color[3]);
                 glUniform2f(posLoc,this->_position.x,this->_position.y);
                 glUniform1f(angleLoc, this->_angle);
+                glUniform2f(scaleLoc,this->_scale.x,this->_scale.y);
 
                 glBindVertexArray(this->shapeVAO);
                 glDrawArrays(GL_TRIANGLE_FAN, 0, this->vertexCount); 
@@ -135,6 +138,12 @@ namespace EasySDL
                 glDeleteVertexArrays(1,&(this->shapeVAO));
             }
 
+            virtual void setScale(EasySDL::Vec2 scale){
+                this->_scale = scale;
+            }
+            virtual void setScale(float scale){
+                this->_scale = {scale,scale};
+            }
     };
 
 }

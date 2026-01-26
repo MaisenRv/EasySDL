@@ -6,7 +6,6 @@
 #include "../../utils/pathList.hpp"
 #include "../../../Math/types/Vec2.hpp"
 #include "../../utils/shadersUtils.hpp"
-// #include "../../Window.hpp"
 #include "../../interface/IWindow.hpp"
 
 #ifdef __EMSCRIPTEN__
@@ -34,6 +33,11 @@ namespace EasySDL
         float _scale = 1;
         Vec2 _pos = {0,0};
         std::string _message = "";
+
+        // state
+        bool isUpdatableTexture = false;
+        bool geometryDirty = false;
+
 
         void generateTexture(const std::string &str)
         {
@@ -86,7 +90,6 @@ namespace EasySDL
     public:
         Text(const std::string &fontPath, int fontSize)
         {
-            // Load font (ensure TTF_Init() called before)
             font = TTF_OpenFont(fontPath.c_str(), fontSize);
             color = {255, 255, 255, 255};
             glGenTextures(1, &textTexture);
@@ -186,6 +189,13 @@ namespace EasySDL
             return this->hText;
         }
 
+        void setTextColor(const SDL_Color color){
+            this->color = color;
+        }
+
+        void setUpdatebleTexture(bool isUpdatableTexture){
+            this->isUpdatableTexture = isUpdatableTexture;
+        }
     };
 }
 

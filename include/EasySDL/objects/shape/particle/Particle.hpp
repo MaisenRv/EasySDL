@@ -4,13 +4,15 @@
 #include "../../../utils/pathList.hpp"
 #include "../../../interface/IWindow.hpp"
 #include "../shape.hpp"
+#include "../../../utils/collitions.hpp"
+#include "../../../interface/ICollitionObject.hpp"
 #include <vector>
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
 
 namespace EasySDL
 {
-    class Particle : public EasySDL::Shape
+    class Particle : public EasySDL::Shape, public EasySDL::ICollitionObject
     {
     private:
         // Particle info
@@ -75,11 +77,13 @@ namespace EasySDL
             GLint colorLoc = glGetUniformLocation(this->program, "u_Color"); 
             GLint posLoc = glGetUniformLocation(this->program,"u_Position");
             GLint angleLoc = glGetUniformLocation(this->program,"u_Rotation");
+            GLint scaleLoc = glGetUniformLocation(this->program,"u_Scale");
 
             glUniform2f(loc, (float)w->getWidth(), (float)w->getHeight());
             glUniform4f(colorLoc, _color[0], _color[1], _color[2], _color[3]);
             glUniform2f(posLoc,this->_position.x,this->_position.y);
             glUniform1f(angleLoc, this->_angle);
+            glUniform2f(scaleLoc,this->_scale.x,this->_scale.y);
 
             glBindVertexArray(this->shapeVAO);
             glDrawArrays(GL_TRIANGLE_FAN, 0, this->vertexCount);  
@@ -95,6 +99,18 @@ namespace EasySDL
             glDeleteVertexArrays(1,&(this->shapeVAO));
         }
 
+        bool IsColliding(EasySDL::Vec2 objectPosition) override{
+            if(!this->isActivateCollitions)
+                return false;
+
+            if(this->_position.distance(objectPosition) < this->_size){
+                this->isColliding = true;
+            }else{
+                this->isColliding = false;
+            }
+            return this->isColliding;
+        }
+        void updateBoxModel()override{}
         //-------------------- Getters and setters
 
         void setResolution(int resolution){

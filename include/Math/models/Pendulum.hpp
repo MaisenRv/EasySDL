@@ -15,23 +15,19 @@ namespace Math
         float length;
         float t;
         float step;
-
-        const float ROTATION = -1.5708;
+        const float ROTATION = -M_PI_2;
         Pendulum(float angle0, float vel0, float t0, float length, float step):
-        angle(angle0),vel(vel0),t(t0),length(length/400),step(step) {}
+        angle(angle0),vel(vel0),t(t0),length(length/400),step(step){}
         
         float calculateAngleNextIteration()
         {
-            this->vel = Math::EulerMethod(
+            Math::EulerMethod2Order(
                 this->vel,
-                this->step,
-                this->t,
-                this->methodLagrange());
-            this->angle = Math::EulerMethod(
                 this->angle,
                 this->step,
                 this->t,
-                this->vel);
+                this->methodLagrange()
+            );
             return this->angle + this->ROTATION;
         }
 
@@ -41,6 +37,16 @@ namespace Math
         }
         void setAngle(float angle){
             this->angle = angle;
+        }
+
+        void setLength(float newLength){
+            this->length = newLength/400;
+            this->restart();
+        }
+        void restart(){
+            this->t = 0;
+            this->vel = 0;
+           
         }
     };
 }

@@ -2,7 +2,7 @@
 #include <SDL2/SDL.h>
 #include <functional>
 #include <GL/glew.h>
-#include "../utils/mouseState.hpp"
+#include "../types/mouseState.hpp"
 
 namespace EasySDL
 {
