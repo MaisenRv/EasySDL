@@ -24,8 +24,8 @@ namespace EasySDL
         void _calculateVertex()
         {
             this->_vertexList.clear();
-            EasySDL::Vec2 p0{this->_coords[0], this->_coords[1]};
-            EasySDL::Vec2 p1{this->_coords[2], this->_coords[3]};
+            Math::Vec2 p0{this->_coords[0], this->_coords[1]};
+            Math::Vec2 p1{this->_coords[2], this->_coords[3]};
             this->_length = p0.distance(p1);
 
             if(this->_lineAttachType == EasySDL::ATTACH_P2){
@@ -44,7 +44,7 @@ namespace EasySDL
                 this->_vertexList.push_back(0);
                 this->_vertexList.push_back(halfLength);
                 this->_vertexList.push_back(0);
-                EasySDL::Vec2 center = p0.betweenPoint(p1);
+                Math::Vec2 center = p0.betweenPoint(p1);
                 this->_angle = center.angle(p1);
                 this->_position = center;
                 return;
@@ -176,7 +176,7 @@ namespace EasySDL
             this->geometryDirty = true;
         }
 
-        EasySDL::Vec2 getPosPoint2(){
+        Math::Vec2 getPosPoint2(){
             float c = std::cos(_angle);
             float s = std::sin(_angle);
 
@@ -204,7 +204,7 @@ namespace EasySDL
             this->geometryDirty = true;
         }
 
-        void setPosPoint1( EasySDL::Vec2 pos){
+        void setPosPoint1( Math::Vec2 pos){
             this->_position = pos;
         }
 

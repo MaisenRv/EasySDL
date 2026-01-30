@@ -15,7 +15,7 @@ namespace EasySDL
     private:
         int _width;
         int _height;
-        EasySDL::Vec2 _position;
+        Math::Vec2 _position;
         float _scale = 1;
 
         //  Vertex info
@@ -51,7 +51,7 @@ namespace EasySDL
             vertexCopy.push_back(this->_topLeft.y);
 
             for(size_t i = 0; i < vertexCopy.size();  i += 2){
-                EasySDL::Vec2 result = EasySDL::rotate2D(
+                Math::Vec2 result = EasySDL::rotate2D(
                     {vertexCopy[i],vertexCopy[i+1]},
                     this->_angle,
                     this->_position
@@ -87,7 +87,7 @@ namespace EasySDL
         }
 
     public:
-        Square(EasySDL::Vec2 pos, float width, float height) : _position(pos), _width(width), _height(height) {
+        Square(Math::Vec2 pos, float width, float height) : _position(pos), _width(width), _height(height) {
             this->vertexCount = 6;
             this->_updateBoundaries();
         }
@@ -120,7 +120,7 @@ namespace EasySDL
 	// --------- GETTERS SETTERS
 
 
-    void setPos(const EasySDL::Vec2 & newPos){
+    void setPos(const Math::Vec2 & newPos){
         this->_position = newPos;
         this->_updateBoundaries();
     }

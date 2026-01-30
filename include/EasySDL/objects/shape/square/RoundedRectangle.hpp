@@ -26,7 +26,7 @@ namespace EasySDL
                     return;
                 }
                 
-                EasySDL::Vec2 quadrantV = {0,0};
+                Math::Vec2 quadrantV = {0,0};
 
                 float angle = 0;
                 float end = float(M_PI_2);
@@ -100,7 +100,7 @@ namespace EasySDL
             }
 
         public:
-            RoundedRectagle(EasySDL::Vec2 position,float width,float height, float radius, int resolution) 
+            RoundedRectagle(Math::Vec2 position,float width,float height, float radius, int resolution) 
             : _width(width),_height(height),_radius(radius),_resolution(resolution)
             {
                 this->_position = position;
@@ -138,7 +138,7 @@ namespace EasySDL
                 glDeleteVertexArrays(1,&(this->shapeVAO));
             }
 
-            virtual void setScale(EasySDL::Vec2 scale){
+            virtual void setScale(Math::Vec2 scale){
                 this->_scale = scale;
             }
             virtual void setScale(float scale){

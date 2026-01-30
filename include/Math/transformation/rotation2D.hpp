@@ -6,7 +6,7 @@
 
 namespace EasySDL
 {   
-    EasySDL::Vec2 rotate2D(EasySDL::Vec2 point, float angle, EasySDL::Vec2 center){
+    Math::Vec2 rotate2D(Math::Vec2 point, float angle, Math::Vec2 center){
         EasySDL::Matrix<float> M = {
             {cosf(angle), -sinf(angle), center.x - center.x*cosf(angle) + center.y*sinf(angle)},
             {sinf(angle), cosf(angle) , center.y - center.x*sinf(angle) - center.y*cosf(angle)},

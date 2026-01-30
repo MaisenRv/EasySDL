@@ -7,7 +7,7 @@ namespace EasySDL
     struct BoxModel2d
     {
         PositionType type = PositionType::BottomLeft;
-        EasySDL::Vec2* position = nullptr;
+        Math::Vec2* position = nullptr;
         float width = 0;
         float height = 0;  
     };

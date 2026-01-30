@@ -13,9 +13,9 @@ namespace EasySDL{
 
             // properties
             float _color[4] = {1.0f, 1.0f, 1.0f, 1.0f};
-            EasySDL::Vec2 _position;
+            Math::Vec2 _position;
             float _angle = 0;
-            EasySDL::Vec2 _scale = {1.0f,1.0f};
+            Math::Vec2 _scale = {1.0f,1.0f};
 
             //  Vertex info
             std::vector<float> _vertexList;
@@ -77,10 +77,10 @@ namespace EasySDL{
             }
 
             // POSITION
-            EasySDL::Vec2 getPosition(){
+            Math::Vec2 getPosition(){
                 return this->_position;
             }
-            virtual void setPos(const EasySDL::Vec2 newPos){
+            virtual void setPos(const Math::Vec2 newPos){
                 this->_position = newPos;
             }
 

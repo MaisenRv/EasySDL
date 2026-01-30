@@ -102,7 +102,7 @@ namespace EasySDL
                 if (p.x < domainMin || p.x > domainMax)
                     continue;
 
-                EasySDL::Vec2 pV(map(p.x,p.y));
+                Math::Vec2 pV(map(p.x,p.y));
                 _vertexList.push_back(pV.x);
                 _vertexList.push_back(pV.y);
             }

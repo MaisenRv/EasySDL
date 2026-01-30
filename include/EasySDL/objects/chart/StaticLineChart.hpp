@@ -41,7 +41,7 @@ namespace EasySDL
                 this->_updateBoundaries();
                 bool setPointPos = true;
                 for(float i = this->_staticDomain[0]; i < this->_staticDomain[1]; i+=this->_step){
-                    EasySDL::Vec2 position = this->mapValueToPixelXY(i,f(i));
+                    Math::Vec2 position = this->mapValueToPixelXY(i,f(i));
                   
                     if(position.y > this->_topLeft.y || position.y < this->_bottomLeft.y) continue;
                     if(setPointPos){

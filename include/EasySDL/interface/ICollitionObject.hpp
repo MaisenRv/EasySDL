@@ -10,7 +10,7 @@ namespace EasySDL{
 
         public:
             virtual ~ICollitionObject() = default;
-            virtual bool IsColliding(EasySDL::Vec2 objectPosition) = 0;
+            virtual bool IsColliding(Math::Vec2 objectPosition) = 0;
             virtual void updateBoxModel() = 0;
             bool getIsActivateCollitions(){
                 return this->isActivateCollitions;

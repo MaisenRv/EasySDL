@@ -99,7 +99,7 @@ namespace EasySDL
             glDeleteVertexArrays(1,&(this->shapeVAO));
         }
 
-        bool IsColliding(EasySDL::Vec2 objectPosition) override{
+        bool IsColliding(Math::Vec2 objectPosition) override{
             if(!this->isActivateCollitions)
                 return false;
 

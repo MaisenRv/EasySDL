@@ -1,7 +1,7 @@
 #pragma once
 #include <cmath>
 
-namespace EasySDL
+namespace Math
 {
     struct Vec2
     {
@@ -15,7 +15,7 @@ namespace EasySDL
         {
             return sqrt(pow((other.x - this->x), 2) + pow((other.y - this->y), 2));
         }
-        EasySDL::Vec2 betweenPoint(const Vec2 &other)
+        Vec2 betweenPoint(const Vec2 &other)
         {
             return {(this->x + other.x) / 2, (this->y + other.y) / 2};
         }
@@ -28,9 +28,9 @@ namespace EasySDL
             return anguloRad;
         }
 
-        EasySDL::Vec2 operator+(const Vec2 &other) const { return {this->x + other.x, this->y + other.y}; }
-        EasySDL::Vec2 operator-(const Vec2 &other) const { return {this->x - other.x, this->y - other.y}; }
-        EasySDL::Vec2 operator*(float scalar)      const { return {this->x * scalar, this->y * scalar}; }
+        Vec2 operator+(const Vec2 &other) const { return {this->x + other.x, this->y + other.y}; }
+        Vec2 operator-(const Vec2 &other) const { return {this->x - other.x, this->y - other.y}; }
+        Vec2 operator*(float scalar)      const { return {this->x * scalar, this->y * scalar}; }
     };
 
 }

@@ -39,7 +39,7 @@ namespace EasySDL
 
             for(auto& column: this->_columns) { 
                 column->shiftX(shiftValue);
-                EasySDL::Vec2 pos = column->getPosition();
+                Math::Vec2 pos = column->getPosition();
                 if (!changeColumn && pos.x <= this->_pos.x){
                     float x;
                     if(pos.x == this->_pos.x){
@@ -77,7 +77,7 @@ namespace EasySDL
                     w, 
                     this->getDomainMin(),
                     this->getDomainMax(),
-                    [&](float x, float y) -> EasySDL::Vec2 {
+                    [&](float x, float y) -> Math::Vec2 {
                         return mapValueToPixelDinamicXY(x, y);
                     }
                 );

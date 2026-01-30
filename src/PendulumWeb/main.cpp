@@ -85,7 +85,7 @@ int main(){
     };
     // draw method
     auto draw = [&](){
-        EasySDL::Vec2 mousePosition = {w->getMouseState().x,w->getHeight() - w->getMouseState().y};
+        Math::Vec2 mousePosition = {w->getMouseState().x,w->getHeight() - w->getMouseState().y};
         if(b.IsColliding(mousePosition)){
             if(animationState){
                 b.executeClickEvent(w->getMouseState().leftDown,

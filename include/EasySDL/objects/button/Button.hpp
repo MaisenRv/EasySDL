@@ -19,7 +19,7 @@ namespace EasySDL
         bool _wasPressed = false;
 
         public:
-        Button(EasySDL::Vec2 position,float width,float height, float radius, int resolution,std::string text):
+        Button(Math::Vec2 position,float width,float height, float radius, int resolution,std::string text):
             EasySDL::RoundedRectagle(position,width,height,radius,resolution),
             _text(EasySDL::POPPINS_REGULAR, 64)
             {
@@ -64,7 +64,7 @@ namespace EasySDL
             this->setScale(newScale);
         }
 
-        bool IsColliding(EasySDL::Vec2 objectPosition) override{
+        bool IsColliding(Math::Vec2 objectPosition) override{
             if(!this->isActivateCollitions)
                 return false;
 
@@ -79,7 +79,7 @@ namespace EasySDL
             _wasPressed = isPressed;
         }
 
-        void setScale(EasySDL::Vec2 scale) override{
+        void setScale(Math::Vec2 scale) override{
             EasySDL::RoundedRectagle::setScale(scale);
             this->_text.setScale((this->_height * 3 * scale.y)/400.0f);
             this->updateBoxModel();
@@ -98,7 +98,7 @@ namespace EasySDL
             this->_isHoverActivate = hover;
         }
 
-        void setPos(const EasySDL::Vec2 newPos) override{
+        void setPos(const Math::Vec2 newPos) override{
             EasySDL::RoundedRectagle::setPos(newPos);
             this->_text.setPos(newPos);
         }

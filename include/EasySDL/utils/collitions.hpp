@@ -5,7 +5,7 @@
 namespace EasySDL{
     class Collitions{
         public:
-        static bool calculateSquareCollition(EasySDL::Vec2 objectPosition,BoxModel2d* model){
+        static bool calculateSquareCollition(Math::Vec2 objectPosition,BoxModel2d* model){
             if(model->type == EasySDL::PositionType::Center){
                 float halfWidth = model->width / 2;
                 float halfHeight = model->height / 2;
