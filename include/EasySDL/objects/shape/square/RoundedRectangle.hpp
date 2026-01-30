@@ -101,7 +101,7 @@ namespace EasySDL
 
         public:
             RoundedRectagle(Math::Vec2 position,float width,float height, float radius, int resolution) 
-            : _width(width),_height(height),_radius(radius),_resolution(resolution)
+            : Shape(position),_width(width),_height(height),_radius(radius),_resolution(resolution)
             {
                 this->_position = position;
             }

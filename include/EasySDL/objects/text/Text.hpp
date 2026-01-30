@@ -31,7 +31,7 @@ namespace EasySDL
         std::vector<float> vertices;
         unsigned int indices[6] = {0, 1, 2, 2, 3, 0};
         float _scale = 1;
-        Vec2 _pos = {0,0};
+        Math::Vec2 _pos = {0,0};
         std::string _message = "";
 
         // state
@@ -172,7 +172,7 @@ namespace EasySDL
             this->_scale = scale;
         }
 
-        void setPos(Vec2 newPos){
+        void setPos(Math::Vec2 newPos){
             this->_pos.x = newPos.x;
             this->_pos.y = newPos.y;
         }

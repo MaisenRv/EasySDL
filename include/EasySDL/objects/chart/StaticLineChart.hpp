@@ -24,7 +24,7 @@ namespace EasySDL
             }
 
         public:
-            StaticLineChart(Vec2 pos, float width, float height, std::string title): Chart(pos, width, height, title){
+            StaticLineChart(Math::Vec2 pos, float width, float height, std::string title): Chart(pos, width, height, title){
                 this->setShowGrid(false);
             }
 

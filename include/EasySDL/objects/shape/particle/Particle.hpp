@@ -56,10 +56,10 @@ namespace EasySDL
         }
 
     public:
-        Particle():_size(10),_resolution(20){
+        Particle(): Shape({0,0}),_size(10),_resolution(20){
             this->_position = {0,0};
         };
-        Particle(float x, float y, float size, int resolution) : _size(size), _resolution(resolution){
+        Particle(float x, float y, float size, int resolution) : Shape({x,y}),_size(size), _resolution(resolution){
             this->_position = {x,y};
         };
 

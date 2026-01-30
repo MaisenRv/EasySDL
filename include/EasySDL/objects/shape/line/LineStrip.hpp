@@ -35,7 +35,7 @@ namespace EasySDL
 
     public:
         std::vector<LogicalPoint> _points;
-        LineStrip(GLfloat lineWidth) : _lineWidth(lineWidth) {}
+        LineStrip(GLfloat lineWidth) : Shape({0,0}),_lineWidth(lineWidth) {}
 
         void draw(EasySDL::IWindow *w) override
         {
@@ -64,7 +64,7 @@ namespace EasySDL
             glLineWidth(this->_lineWidth);
             glDrawArrays(GL_LINE_STRIP, 0, this->vertexCount);
         }
-        void drawLineChart(EasySDL::IWindow *w,float domainMin, float domainMax,std::function<Vec2(float,float)> map){
+        void drawLineChart(EasySDL::IWindow *w,float domainMin, float domainMax,std::function<Math::Vec2(float,float)> map){
             if (_points.empty()) return;
             
             rebuildVertices(domainMin,domainMax,map);
@@ -93,7 +93,7 @@ namespace EasySDL
 
         }
 
-        void rebuildVertices(float domainMin, float domainMax,std::function<Vec2(float,float)> map)
+        void rebuildVertices(float domainMin, float domainMax,std::function<Math::Vec2(float,float)> map)
         {
             _vertexList.clear();
             
@@ -111,14 +111,14 @@ namespace EasySDL
         }
 
 
-        void addPoint(Vec2 point)
+        void addPoint(Math::Vec2 point)
         {
             this->_vertexList.push_back(point.x);
             this->_vertexList.push_back(point.y);
             this->geometryDirty = true;
         }
 
-        void addPointLineChart(Vec2 point){
+        void addPointLineChart(Math::Vec2 point){
             this->_points.push_back({point.x, point.y});
         }
 
@@ -144,12 +144,12 @@ namespace EasySDL
             this->_position.x -= delta;
         }
 
-        void updateAllPoint(std::function<Vec2(float x,float y)> updateFunction){
+        void updateAllPoint(std::function<Math::Vec2(float x,float y)> updateFunction){
             std::vector<float> copyPoints(this->_vertexList);
             this->_vertexList.clear();
             for (size_t i = 0; i < copyPoints.size(); i += 2)
             {
-                Vec2 newPoints = updateFunction(copyPoints[i], copyPoints[i+1]);
+                Math::Vec2 newPoints = updateFunction(copyPoints[i], copyPoints[i+1]);
                 this->_vertexList.push_back(newPoints.x);
                 this->_vertexList.push_back(newPoints.y);
             }

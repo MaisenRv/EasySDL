@@ -5,8 +5,9 @@ namespace EasySDL
 {
     struct Transform2D
     {
-        Math::Vec2 position = {0,0};
-        Math::Vec2 scale = {0,0};
-        float rotación = 0.0f;
+        Math::Vec2 position;
+        Math::Vec2 scale = {1.0f,1.0f};
+        float angle = 0.0f;
+        Transform2D(const Math::Vec2 &pos):position(pos){}
     };
 }

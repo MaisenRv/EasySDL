@@ -71,7 +71,7 @@ namespace EasySDL
         }
 
     public:
-        Line(float x0, float y0, float x1, float y1, GLfloat lineWidth) : _lineWidth(lineWidth)
+        Line(float x0, float y0, float x1, float y1, GLfloat lineWidth) : Shape({x0,y0}),_lineWidth(lineWidth)
         {
             this->vertexCount = 2;
             this->_coords[0] = x0;

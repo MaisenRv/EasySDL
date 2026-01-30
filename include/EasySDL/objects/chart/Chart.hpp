@@ -15,14 +15,14 @@ namespace EasySDL
     class Chart : public EasySDL::IDrawable, public EasySDL::IInitializable{
         protected:
             // Chart info
-            Vec2 _pos;
+            Math::Vec2 _pos;
             float _width;
             float _height;
 
             // Chart title info
             EasySDL::Text _title;
             float _titleTextScale = 0.15;
-            Vec2 _titlePos;
+            Math::Vec2 _titlePos;
             std::string _titleStr;
 
             // Chart limits
@@ -38,10 +38,10 @@ namespace EasySDL
 
 
             // Chart boundaries
-            Vec2 _topLeft;
-            Vec2 _topRight;
-            Vec2 _bottomRight;
-            Vec2 _bottomLeft;
+            Math::Vec2 _topLeft;
+            Math::Vec2 _topRight;
+            Math::Vec2 _bottomRight;
+            Math::Vec2 _bottomLeft;
             std::unique_ptr<EasySDL::Line> _border[4];
 
             // Chart grid
@@ -236,7 +236,7 @@ namespace EasySDL
             }
 
         public:
-            Chart(Vec2 pos, float width, float height, std::string title):
+            Chart(Math::Vec2 pos, float width, float height, std::string title):
             _pos(pos),
             _width(width),
             _height(height),
@@ -255,16 +255,16 @@ namespace EasySDL
                 this->_drawLimitsInfo(w);
             }
 
-            Vec2 mapValueToPixelDinamicXY(float valueX, float valueY){
+            Math::Vec2 mapValueToPixelDinamicXY(float valueX, float valueY){
                 return  {this->_mapValueToPixelDinamicX(valueX), this->_mapValueToPixelDinamicY(valueY)};
             }
-            Vec2 mapValueToPixelXY(float valueX, float valueY){
+            Math::Vec2 mapValueToPixelXY(float valueX, float valueY){
                 return  {this->_mapValueToPixelX(valueX), this->_mapValueToPixelY(valueY)};
             }
         
         // -------- GETTERS SETTERS -------- 
             // CHART
-            Vec2 getPos(){ return this->_pos; }
+            Math::Vec2 getPos(){ return this->_pos; }
             void setPos(float x, float y){ this->_pos = {x,y}; }
             float getWidth(){ return this->_width; }
             void setWidth(float width){ this->_width = width; }
@@ -273,7 +273,7 @@ namespace EasySDL
 
             // CHART TITLE
             float getTitleTextScale(){ return this->_titleTextScale; }
-            Vec2 getTitlePos(){ return this->_titlePos; }
+            Math::Vec2 getTitlePos(){ return this->_titlePos; }
             void setTitleTextScale(float scale){ 
                 this->_titleTextScale =  scale; 
                 this->_updateChartTitle();

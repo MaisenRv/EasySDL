@@ -22,10 +22,10 @@ namespace EasySDL
         float _angle = 0;
 
         // boundaries
-        Vec2 _topLeft;
-        Vec2 _topRight;
-        Vec2 _bottomRight;
-        Vec2 _bottomLeft;
+        Math::Vec2 _topLeft;
+        Math::Vec2 _topRight;
+        Math::Vec2 _bottomRight;
+        Math::Vec2 _bottomLeft;
 
         void _calculateVertex()
         {
@@ -87,7 +87,7 @@ namespace EasySDL
         }
 
     public:
-        Square(Math::Vec2 pos, float width, float height) : _position(pos), _width(width), _height(height) {
+        Square(Math::Vec2 pos, float width, float height) : Shape(pos),_position(pos), _width(width), _height(height) {
             this->vertexCount = 6;
             this->_updateBoundaries();
         }

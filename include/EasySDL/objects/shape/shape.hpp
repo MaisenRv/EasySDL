@@ -4,6 +4,9 @@
 #include "../../interface/IInitializable.hpp"
 #include "../../interface/IWindow.hpp"
 #include "../../../Math/types/Vec2.hpp"
+
+#include "../../types/Transform2D.hpp"
+
 #include <vector>
 #include <GL/glew.h>
 
@@ -16,6 +19,8 @@ namespace EasySDL{
             Math::Vec2 _position;
             float _angle = 0;
             Math::Vec2 _scale = {1.0f,1.0f};
+
+            Transform2D _transform;
 
             //  Vertex info
             std::vector<float> _vertexList;
@@ -66,7 +71,8 @@ namespace EasySDL{
 
         public:
             GLuint program;
-            virtual ~Shape() = default;  
+            virtual ~Shape() = default;
+            Shape(Math::Vec2 position):_transform(position){}
 
             void setColor(const float (&color)[4] ){
                 for (size_t i = 0; i < 4; i++) this->_color[i] = color[i];

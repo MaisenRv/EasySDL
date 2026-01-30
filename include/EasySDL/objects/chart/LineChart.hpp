@@ -66,7 +66,7 @@ namespace EasySDL
         }
 
     public:
-        LineChart(Vec2 pos, float width, float height, std::string title): Chart(pos, width, height, title){}
+        LineChart(Math::Vec2 pos, float width, float height, std::string title): Chart(pos, width, height, title){}
 
 
 
