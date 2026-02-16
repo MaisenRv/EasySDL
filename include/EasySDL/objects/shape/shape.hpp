@@ -23,11 +23,11 @@ namespace EasySDL{
             Transform2D _transform;
 
             //  Vertex info
-            std::vector<float> _vertexList;
+            std::vector<float> _vertexList; // L
             bool isCreatedVertex = false;
-            int vertexCount;
-            GLuint shapeVBO;
-            GLuint shapeVAO;
+            int vertexCount; // L
+            GLuint shapeVBO; // L
+            GLuint shapeVAO; // L
 
 
             // Shader info
@@ -36,10 +36,10 @@ namespace EasySDL{
 
             // restrictions
             bool isMovable = false;
-            bool isDeformable = false;
+            bool isDeformable = false; // L
             bool isVertexUpdate = false;
             // flag
-            bool geometryDirty = false;
+            bool geometryDirty = false; // L
 
             bool _restriction() override {
                 return this->_vertexSrc && this->_fragmentSrc;
