@@ -1,4 +1,6 @@
 #pragma once
+#include "../../types/PrimitiveTypes.hpp"
+
 #include <vector>
 
 namespace EasySDL{
@@ -13,17 +15,17 @@ namespace EasySDL{
     struct Mesh2D
     {
         std::vector<T> vertices;
-        int vertexCount = 0;
         bool geometryDirty = false;
         MeshUsage usage = MeshUsage::STATIC;
+        PrimitiveType primitiveType = PrimitiveType::TriangleFan;
         
         void clear(){ 
             vertices.clear();
             geometryDirty = true;
         }
 
-        void updateVertexCount(){
-            vertexCount = vertices.size() / 2;
+        const int vertexCount() const{
+            return vertices.size() / 2;
         }
 
         void addPoint(T x, T y){

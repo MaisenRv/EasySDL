@@ -115,10 +115,10 @@ namespace EasySDL
             this->prepareWindow();
             this->prepareGL();
             glClearColor(
-                DARK_BLUE_NORMALIZED[0],
-                DARK_BLUE_NORMALIZED[1],
-                DARK_BLUE_NORMALIZED[2],
-                DARK_BLUE_NORMALIZED[3]);
+                DARK_BLUE_NORMALIZED.r,
+                DARK_BLUE_NORMALIZED.g,
+                DARK_BLUE_NORMALIZED.b,
+                DARK_BLUE_NORMALIZED.a);
         }
 
         void start(std::function<void()> drawFn, std::function<void()> setup) override

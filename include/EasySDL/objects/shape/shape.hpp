@@ -2,114 +2,79 @@
 
 #include "../../interface/IDrawable.hpp"
 #include "../../interface/IInitializable.hpp"
-#include "../../interface/IWindow.hpp"
 #include "../../../Math/types/Vec2.hpp"
+#include "../../render/core/Transform2D.hpp"
+#include "../../render/core/Material2D.hpp"
+#include "../../render/geometry/Mesh2D.hpp"
+#include "../../render/opengl/GLMesh2D.hpp"
+#include "../../render/shaders/ShapeShader2D.hpp"
 
-#include "../../types/Transform2D.hpp"
-
-#include <vector>
 #include <GL/glew.h>
 
 namespace EasySDL{
     class Shape : public EasySDL::IDrawable, public EasySDL::IInitializable {
         protected:
-
-            // properties
-            float _color[4] = {1.0f, 1.0f, 1.0f, 1.0f};
-            Math::Vec2 _position;
-            float _angle = 0;
-            Math::Vec2 _scale = {1.0f,1.0f};
-
             Transform2D _transform;
+            Material2D _material;
+            Mesh2D<float> _mesh;
+            GLMesh2D<float> _glMesh;
 
-            //  Vertex info
-            std::vector<float> _vertexList; // L
-            bool isCreatedVertex = false;
-            int vertexCount; // L
-            GLuint shapeVBO; // L
-            GLuint shapeVAO; // L
-
-
-            // Shader info
-            GLuint _vertexSrc = 0;
-            GLuint _fragmentSrc = 0;
-
-            // restrictions
-            bool isMovable = false;
-            bool isDeformable = false; // L
-            bool isVertexUpdate = false;
-            // flag
-            bool geometryDirty = false; // L
-
-            bool _restriction() override {
-                return this->_vertexSrc && this->_fragmentSrc;
-            }
-
-            void _updateVertex(){
-                glBindBuffer(GL_ARRAY_BUFFER,this->shapeVBO);
-
-                glBufferData(
-                    GL_ARRAY_BUFFER,
-                    _vertexList.size() * sizeof(float),
-                    _vertexList.data(),
-                    this->isDeformable ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW
-                );
-            }
-
-
-            void _createVAOAndVBO(){
-                glGenVertexArrays(1,&(this->shapeVAO));
-                glGenBuffers(1,&(this->shapeVBO));
-
-                glBindVertexArray(this->shapeVAO);
-                this->_updateVertex();
-
-                glEnableVertexAttribArray(0);
-                glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
-                glBindVertexArray(0);
+            void _onSetup() override{
+                this->calculateVertices();
+                this->_glMesh.create();
+                this->updateVertex(); 
             }
 
         public:
-            GLuint program;
-            virtual ~Shape() = default;
-            Shape(Math::Vec2 position):_transform(position){}
 
-            void setColor(const float (&color)[4] ){
-                for (size_t i = 0; i < 4; i++) this->_color[i] = color[i];
+            ~Shape(){
+                this->_glMesh.del();
+            };
+            Shape(const Math::Vec2 position):_transform(position){}
+            virtual void calculateVertices() = 0;
+
+            void updateVertex(){
+                if(this->_mesh.geometryDirty){
+                    this->_glMesh.upload(this->_mesh);
+                    this->_mesh.geometryDirty = false;
+                }
             }
 
             void setDeformable(bool deformable){
-                this->isDeformable = deformable;
-            }
+                if(deformable) {
+                    this->_mesh.usage = MeshUsage::DYNAMIC;
+                    return;
+                }
+                this->_mesh.usage = MeshUsage::STATIC;
+                this->_mesh.geometryDirty = true;
+            }            
+            void setPosition(const Math::Vec2 newPos){ this->_transform.position = newPos; }
+            void setAngle(float angle)               { this->_transform.angle = angle; }  
+            void setColor(const Color color)         { this->_material.color = color; }
+            void setScale(const Math::Vec2 newSca)   { this->_transform.scale = newSca; }
 
-            // POSITION
-            Math::Vec2 getPosition(){
-                return this->_position;
-            }
-            virtual void setPos(const Math::Vec2 newPos){
-                this->_position = newPos;
-            }
+            const Math::Vec2 getPosition()     const { return this->_transform.position; }
+            const float getAngle()             const { return this->_transform.angle; }
+            const Math::Vec2 getScale()        const { return this->_transform.scale; }
+            const Transform2D& getTransform()  const { return this->_transform; }
+            const Material2D& getMaterial()    const { return this->_material; }
+            const GLMesh2D<float>& getGLMesh() const { return this->_glMesh; }
+            const Mesh2D<float>& getMesh()     const { return this->_mesh; }
 
-            // ANGLE
-            void setAngle(float angle) { 
-                this->_angle = angle; 
-            }  
-            float getAngle(){ 
-                return this->_angle; 
-            }  
-            std::string getAngleStr(){
-                char buf[32];
-                std::snprintf(buf, sizeof(buf),"%.2f",this->_angle);
-                std::string angleStr(buf);
-                return angleStr;
-            }
-            std::string getAngleDegStr(){
-                char buf[32];
-                float degAngle = this->_angle *(180/M_PI);
-                std::snprintf(buf, sizeof(buf),"%.1f",degAngle);
-                std::string angleStr(buf);
-                return angleStr;
-            }
+       
 
+            // std::string getAngleStr(){
+            //     char buf[32];
+            //     std::snprintf(buf, sizeof(buf),"%.2f",this->_angle);
+            //     std::string angleStr(buf);
+            //     return angleStr;
+            // }
+            // std::string getAngleDegStr(){
+            //     char buf[32];
+            //     float degAngle = this->_angle *(180/M_PI);
+            //     std::snprintf(buf, sizeof(buf),"%.1f",degAngle);
+            //     std::string angleStr(buf);
+            //     return angleStr;
+            // }
     };
 }

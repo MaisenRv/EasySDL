@@ -23,9 +23,9 @@ namespace EasySDL
             glBindVertexArray(0);
         }
 
-        void upload(Mesh2D<T> &mesh){
+        void upload(const Mesh2D<T> &mesh){
             if(!mesh.geometryDirty) return;
-
+            glBindVertexArray(VAO);
             glBindBuffer(GL_ARRAY_BUFFER, VBO);
             glBufferData(
                 GL_ARRAY_BUFFER,
@@ -33,8 +33,12 @@ namespace EasySDL
                 mesh.vertices.data(),
                 (mesh.usage == MeshUsage::DYNAMIC) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW
             );
-            mesh.updateVertexCount();
-            mesh.geometryDirty = false;
+            glBindVertexArray(0);
+        }
+
+        void del(){
+            glDeleteBuffers(1,&VBO);
+            glDeleteVertexArrays(1,&VAO);
         }
     };
     

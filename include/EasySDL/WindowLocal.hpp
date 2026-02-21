@@ -89,10 +89,10 @@ namespace EasySDL
             this->_height = height;
             this->prepareWindow();
             glClearColor(
-                DARK_BLUE_NORMALIZED[0],
-                DARK_BLUE_NORMALIZED[1],
-                DARK_BLUE_NORMALIZED[2],
-                DARK_BLUE_NORMALIZED[3]
+                DARK_BLUE_NORMALIZED.r,
+                DARK_BLUE_NORMALIZED.g,
+                DARK_BLUE_NORMALIZED.b,
+                DARK_BLUE_NORMALIZED.a
             );          
             this->prepareGL();
         }
