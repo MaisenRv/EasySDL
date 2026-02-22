@@ -33,6 +33,16 @@ namespace EasySDL{
             vertices.push_back(y);
             geometryDirty = true;
         }
+        
+        void removeFirstPoint()
+        {
+            if (!vertices.empty())
+            {
+                vertices.erase(vertices.begin());
+                vertices.erase(vertices.begin());
+                geometryDirty = true;
+            }
+        }
     };
 }
 

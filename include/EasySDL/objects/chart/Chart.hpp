@@ -3,7 +3,7 @@
 #include "../../../Math/types/Vec2.hpp"
 #include "../text/Text.hpp"
 #include "../../utils/fonts.hpp"
-#include "../shape/line/Line.hpp"
+#include "../shape/Line.hpp"
 #include "../../utils/format.hpp"
 #include "../../interface/IInitializable.hpp"
 #include "../../interface/IWindow.hpp"
