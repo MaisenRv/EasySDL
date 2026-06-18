@@ -1,18 +1,13 @@
 #pragma once
+
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <iostream>
 #include <GL/glew.h>
 
-namespace EasySDL
-{
-    inline std::string readShader(const std::string &path)
-    {
-        // std::ifstream f(path);
-        // std::stringstream buf;
-        // buf << f.rdbuf();
-        // return buf.str();
+namespace EasySDL::render::shaders{
+    [[nodiscard]] inline std::string readShader(const std::string &path) {
 
         std::ifstream file(path, std::ios::binary);
         if (!file.is_open())
@@ -25,7 +20,6 @@ namespace EasySDL
             (std::istreambuf_iterator<char>(file)),
             std::istreambuf_iterator<char>());
 
-        // 🔥 Quitar UTF-8 BOM si existe
         if (source.size() >= 3 &&
             (unsigned char)source[0] == 0xEF &&
             (unsigned char)source[1] == 0xBB &&
@@ -34,7 +28,6 @@ namespace EasySDL
             source.erase(0, 3);
         }
 
-        // 🔥 Eliminar líneas vacías antes de #version
         while (!source.empty() &&
                (source[0] == '\n' || source[0] == '\r' || source[0] == ' '))
         {
@@ -44,9 +37,8 @@ namespace EasySDL
         return source;
     }
 
-    auto compileShader = [](GLenum type, const std::string &path)
-    {
-        std::string shadersSrc = EasySDL::readShader(path);
+    auto compileShader = [](GLenum type, const std::string &path) {
+        std::string shadersSrc = readShader(path);
         GLuint shader = glCreateShader(type);
         const char *cstr = shadersSrc.c_str();
         glShaderSource(shader, 1, &cstr, nullptr);
