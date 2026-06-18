@@ -1,10 +1,11 @@
 #pragma once
-#include "./interface/IDrawable.hpp"
-#include "./interface/IInitializable.hpp"
-#include "./interface/IWindow.hpp"
-#include "./render/Renderer2D.hpp"
 
 #include <vector>
+
+#include <EasySDL/interface/IDrawable.hpp>
+#include <EasySDL/interface/IInitializable.hpp>
+#include <EasySDL/interface/IWindow.hpp>
+#include <EasySDL/render/Renderer2D.hpp>
 
 namespace EasySDL{
     class Scene{
@@ -20,14 +21,12 @@ namespace EasySDL{
                 }
             }
 
-            void render(Renderer2D& renderer,IWindow *w){
+            void render(render::Renderer2D& renderer,IWindow *w){
                 for(auto &object: this->_sceneObjects){
                     object.get().render(renderer,w);
                 }
             }
 
-            void clearScene(){
-                this->_sceneObjects.clear();
-            }
+            void clearScene(){ this->_sceneObjects.clear(); }
     };
 }
