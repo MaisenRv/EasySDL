@@ -1,9 +1,8 @@
 #pragma once
-namespace EasySDL
-{
+
+namespace EasySDL{
     class IInitializable{
         public:
-
             virtual ~IInitializable() = default;
 
             virtual void setup() final {
@@ -12,6 +11,8 @@ namespace EasySDL
             }
 
         protected:
+            IInitializable() = default;
+
             virtual void _onSetup(){}
             virtual bool _restriction(){return false;}
     };

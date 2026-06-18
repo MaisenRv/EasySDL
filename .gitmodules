@@ -1,0 +1,3 @@
+[submodule "third_party/BitMth"]
+	path = third_party/BitMth
+	url = git@github.com:MaisenRv/BitMth.git
