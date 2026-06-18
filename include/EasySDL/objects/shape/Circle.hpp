@@ -2,7 +2,7 @@
 
 #include <EasySDL/interface/IWindow.hpp>
 #include <EasySDL/render/Renderer2D.hpp>
-#include <EasySDL/objects/shape/shape.hpp>
+#include <EasySDL/objects/shape/Shape.hpp>
 #include <BitMth/geometry/GeometryFactory.hpp>
 
 #include <SDL2/SDL.h>
