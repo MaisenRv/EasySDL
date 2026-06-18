@@ -1,11 +1,11 @@
 #pragma once
 
-namespace EasySDL{
-    struct Color
-    {
-        float r = 1.0f;
-        float g = 1.0f;
-        float b = 1.0f;
-        float a = 1.0f;
+namespace EasySDL::types{
+    template <typename T>
+    struct Color {
+        T r = T(1);
+        T g = T(1);
+        T b = T(1);
+        T a = T(1);
     };
 }

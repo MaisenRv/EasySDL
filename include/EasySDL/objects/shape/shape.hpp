@@ -1,65 +1,70 @@
 #pragma once
 
-#include "../../interface/IDrawable.hpp"
-#include "../../interface/IInitializable.hpp"
-#include "../../../Math/types/Vec2.hpp"
-#include "../../render/core/Transform2D.hpp"
-#include "../../render/core/Material2D.hpp"
-#include "../../render/geometry/Mesh2D.hpp"
-#include "../../render/opengl/GLMesh2D.hpp"
-#include "../../render/shaders/ShapeShader2D.hpp"
-
 #include <GL/glew.h>
 
-namespace EasySDL{
+#include <EasySDL/interface/IDrawable.hpp>
+#include <EasySDL/interface/IInitializable.hpp>
+#include <EasySDL/render/core/Transform2D.hpp>
+#include <EasySDL/render/core/Material2D.hpp>
+#include <EasySDL/render/geometry/Mesh2D.hpp>
+#include <EasySDL/render/opengl/GLMesh2D.hpp>
+
+namespace EasySDL::objects{
     class Shape : public EasySDL::IDrawable, public EasySDL::IInitializable {
         protected:
-            Transform2D _transform;
-            Material2D _material;
-            Mesh2D<float> _mesh;
-            GLMesh2D<float> _glMesh;
+            render::Transform2D<float> _transform;
+            render::Material2D<float> _material;
+            render::Mesh2D<float> _mesh;
+            render::gl::GLMesh2D<float> _glMesh;
 
             void _onSetup() override{
                 this->calculateVertices();
-                this->_glMesh.create();
+                _glMesh.create();
                 this->updateVertex(); 
             }
 
         public:
 
-            ~Shape(){
-                this->_glMesh.del();
-            };
-            Shape(const Math::Vec2 position):_transform(position){}
+            virtual ~Shape() = default;
+            explicit Shape(const BitMth::linalg::Vec2<float>& position):_transform(position){}
+
             virtual void calculateVertices() = 0;
 
             void updateVertex(){
-                if(this->_mesh.geometryDirty){
-                    this->_glMesh.upload(this->_mesh);
-                    this->_mesh.geometryDirty = false;
+                if(_mesh.geometryDirty){
+                    _glMesh.upload(_mesh);
+                    _mesh.geometryDirty = false;
                 }
             }
 
             void setDeformable(bool deformable){
                 if(deformable) {
-                    this->_mesh.usage = MeshUsage::DYNAMIC;
+                    _mesh.usage = render::types::MeshUsage::DYNAMIC;
                     return;
                 }
-                this->_mesh.usage = MeshUsage::STATIC;
-                this->_mesh.geometryDirty = true;
-            }            
-            void setPosition(const Math::Vec2 newPos){ this->_transform.position = newPos; }
-            void setAngle(float angle)               { this->_transform.angle = angle; }  
-            void setColor(const Color color)         { this->_material.color = color; }
-            void setScale(const Math::Vec2 newSca)   { this->_transform.scale = newSca; }
+                _mesh.usage = render::types::MeshUsage::STATIC;
+                _mesh.geometryDirty = true;
+            }          
 
-            const Math::Vec2 getPosition()     const { return this->_transform.position; }
-            const float getAngle()             const { return this->_transform.angle; }
-            const Math::Vec2 getScale()        const { return this->_transform.scale; }
-            const Transform2D& getTransform()  const { return this->_transform; }
-            const Material2D& getMaterial()    const { return this->_material; }
-            const GLMesh2D<float>& getGLMesh() const { return this->_glMesh; }
-            const Mesh2D<float>& getMesh()     const { return this->_mesh; }
+            void setPosition(const BitMth::linalg::Vec2<float>& newPos) { _transform.position = newPos; }
+            void setAngle(float angle)                                  { _transform.angle = angle; }  
+            void setColor(const ::EasySDL::types::Color<float>& color)  { _material.color = color; }
+            void setScale(const BitMth::linalg::Vec2<float>& newSca)    { _transform.scale = newSca; }
+
+            [[nodiscard]] const BitMth::linalg::Vec2<float>& getPosition()const { return _transform.position; }
+            [[nodiscard]] const BitMth::linalg::Vec2<float>& getScale()   const { return _transform.scale; }
+            [[nodiscard]] const render::Transform2D<float>& getTransform()const { return _transform; }
+            [[nodiscard]] const render::Material2D<float>& getMaterial()  const { return _material; }
+            [[nodiscard]] const render::gl::GLMesh2D<float>& getGLMesh()  const { return _glMesh; }
+            [[nodiscard]] const render::Mesh2D<float>& getMesh()          const { return _mesh; }
+            [[nodiscard]] float getAngle()                                const noexcept { return _transform.angle; }
+
+            [[nodiscard]] render::Mesh2D<float>& getMesh()           { return _mesh; }
+            [[nodiscard]] BitMth::linalg::Vec2<float>& getPosition() { return _transform.position; }
+            [[nodiscard]] BitMth::linalg::Vec2<float>& getScale()    { return _transform.scale; }
+            [[nodiscard]] render::Transform2D<float>& getTransform() { return _transform; }
+            [[nodiscard]] render::Material2D<float>& getMaterial()   { return _material; }
+            [[nodiscard]] render::gl::GLMesh2D<float>& getGLMesh()   { return _glMesh; }
 
        
 

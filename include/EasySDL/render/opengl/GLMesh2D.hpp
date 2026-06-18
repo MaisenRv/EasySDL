@@ -1,14 +1,47 @@
 #pragma once
-#include "./../geometry/Mesh2D.hpp"
+
 #include <GL/glew.h>
 
-namespace EasySDL
-{
-    template <typename T = float>
-    struct GLMesh2D
-    {
+#include <EasySDL/render/geometry/Mesh2D.hpp>
+
+namespace EasySDL::render::gl{
+    template <typename T>
+    struct GLMesh2D {
         GLuint VBO = 0;
         GLuint VAO = 0;
+
+        GLMesh2D() = default;
+
+        GLMesh2D(const GLMesh2D&) = delete;
+        GLMesh2D& operator=( const GLMesh2D&) = delete;
+
+        GLMesh2D( GLMesh2D&& meshgl) noexcept: VBO(meshgl.VBO), VAO(meshgl.VAO){
+            meshgl.VAO = 0;
+            meshgl.VBO = 0;
+        };
+        
+        GLMesh2D& operator=( GLMesh2D&& meshgl) noexcept{
+            if (this != &meshgl) {
+                release(); 
+                VBO = meshgl.VBO;
+                VAO = meshgl.VAO;
+                meshgl.VBO = 0;
+                meshgl.VAO = 0;
+            }
+            return *this;
+        };
+        ~GLMesh2D(){ release(); }
+
+        void release() noexcept {
+            if (VBO != 0) {
+                glDeleteBuffers(1, &VBO);
+                VBO = 0;
+            }
+            if (VAO != 0) {
+                glDeleteVertexArrays(1, &VAO);
+                VAO = 0;
+            }
+        }
 
         void create(){
             glGenVertexArrays(1,&VAO);
@@ -23,22 +56,17 @@ namespace EasySDL
             glBindVertexArray(0);
         }
 
-        void upload(const Mesh2D<T> &mesh){
+        void upload(const render::Mesh2D<T> &mesh){
             if(!mesh.geometryDirty) return;
             glBindVertexArray(VAO);
             glBindBuffer(GL_ARRAY_BUFFER, VBO);
             glBufferData(
                 GL_ARRAY_BUFFER,
-                mesh.vertices.size() * sizeof(T),
+                mesh.vertices.size() * sizeof(mesh.vertices[0]),
                 mesh.vertices.data(),
-                (mesh.usage == MeshUsage::DYNAMIC) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW
+                (mesh.usage == types::MeshUsage::DYNAMIC) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW
             );
             glBindVertexArray(0);
-        }
-
-        void del(){
-            glDeleteBuffers(1,&VBO);
-            glDeleteVertexArrays(1,&VAO);
         }
     };
     

@@ -1,13 +1,21 @@
 #pragma once
-#include "./../../../Math/types/Vec2.hpp"
 
-namespace EasySDL
-{
-    struct Transform2D
-    {
-        Math::Vec2 position;
-        Math::Vec2 scale = {1.0f,1.0f};
-        float angle = 0.0f;
-        Transform2D(const Math::Vec2 pos):position(pos){}
+#include <BitMth/linalg/Vec2.hpp>
+
+namespace EasySDL::render {
+    template <typename T>
+    struct Transform2D {
+        BitMth::linalg::Vec2<T> position{};
+        BitMth::linalg::Vec2<T> scale = {T(1),T(1)};
+        T angle{};
+
+        explicit Transform2D(const BitMth::linalg::Vec2<T>& pos):position(pos){}
+
+        Transform2D() = default;
+        Transform2D(const Transform2D& transform) = default;
+        Transform2D( Transform2D&& transform) noexcept = default;
+        Transform2D& operator=( const Transform2D& transform) = default;
+        Transform2D& operator=( Transform2D&& transform) noexcept = default;
+        ~Transform2D() = default;
     };
 }
