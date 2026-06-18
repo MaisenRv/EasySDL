@@ -1,65 +1,42 @@
 #pragma once
 
-#include "../../types/LineAttachmentTypes.hpp"
-#include "../../render/geometry/Geometry2D.hpp"
-#include "../../interface/IWindow.hpp"
-#include "../../render/Renderer2D.hpp"
-#include "../../types/PrimitiveTypes.hpp"
-#include "shape.hpp"
-
 #include <SDL2/SDL.h>
 
-namespace EasySDL
-{
-    class Line : public EasySDL::Shape
-    {
+#include <BitMth/geometry/types/LineAttachmentTypes.hpp>
+#include <BitMth/geometry/GeometryFactory.hpp>
+#include <EasySDL/render/Renderer2D.hpp>
+#include <EasySDL/render/types/PrimitiveTypes.hpp>
+#include <EasySDL/objects/shape/Shape.hpp>
+
+namespace EasySDL::objects{
+    class Line : public Shape {
     private:
-        LineAttachmentTypes _lineAttachType = LineAttachmentTypes::ATTACH_P0;
+        BitMth::geometry::types::LineAttachmentTypes _lineAttachType = BitMth::geometry::types::LineAttachmentTypes::ATTACH_P0;
 
-        void _adjustments(Math::Vec2 p0, Math::Vec2 p1,float lineWidth){
-            switch(this->_lineAttachType)
-            {
-                case LineAttachmentTypes::ATTACH_P0:
-                    _transform.position = p0;
-                    break;
-
-                case LineAttachmentTypes::ATTACH_P1:
-                    _transform.position = p1;
-                    break;
-
-                case LineAttachmentTypes::ATTACH_CENTER:
-                    _transform.position = p0.betweenPoint(p1);
-                    break;
-            }
-            this->_material.lineWidth = lineWidth;
-        }
     public:
         void calculateVertices() override{
-            Geometry2D<float>::buildLine(this->_mesh,this->_lineAttachType);
+            if (_mesh.vertices.empty()){ 
+                _mesh.vertices = BitMth::geometry::GeometryFactory<float>::makeLine(_lineAttachType);
+                return;
+            }
+            BitMth::geometry::GeometryFactory<float>::fillLine(_mesh.vertices, _lineAttachType);
         }
 
-        Line(Math::Vec2 p0, Math::Vec2 p1, GLfloat lineWidth) : Shape(p0)
-        {
-            this->_mesh.primitiveType = PrimitiveType::Lines;
-
-            this->_transform.scale.x = p0.distance(p1);
-            this->_transform.angle = p0.angle(p1);
-
-            this->_adjustments(p0,p1,lineWidth);
+        Line(const BitMth::linalg::Vec2<float>& p0, const BitMth::linalg::Vec2<float>& p1, GLfloat lineWidth) : Shape(p0) {
+            _mesh.primitiveType = render::types::PrimitiveType::Lines;
+            _transform.scale.x = p0.distance(p1);
+            _transform.angle = p0.angleTo(p1);
+            _material.lineWidth = lineWidth;
         }
-        Line(Math::Vec2 p0, float angle, float length,GLfloat lineWidth) : Shape(p0)
-        {
-            this->_mesh.primitiveType = PrimitiveType::Lines;
 
+        Line(const BitMth::linalg::Vec2<float>& p0, float angle, float length, GLfloat lineWidth) : Shape(p0){
+            _mesh.primitiveType = render::types::PrimitiveType::Lines;
             this->_transform.scale.x = length;
             this->_transform.angle = angle;
-            
-            this->_adjustments(p0,this->getPosPoint1(),lineWidth);
+            _material.lineWidth = lineWidth;
         }
 
-        void render(Renderer2D& renderer,EasySDL::IWindow *w) override{
-            renderer.draw(w,*this);
-        }
+        void render(render::Renderer2D& renderer,EasySDL::IWindow *w) override{ renderer.draw(w,*this); }
 
         // void shiftX(float delta)
         // {
@@ -67,76 +44,59 @@ namespace EasySDL
         // }
         //-------------------- Getters and setters
         
-        Math::Vec2 getPosPoint0(){
-            Math::Vec2 dir{
-                std::cos(this->_transform.angle),
-                std::sin(this->_transform.angle)
-            };
+        [[nodiscard]] const BitMth::linalg::Vec2<float> getPosPoint0() const{
+            if(_lineAttachType == BitMth::geometry::types::LineAttachmentTypes::ATTACH_P0) return getPosition();
 
-            switch(this->_lineAttachType)
-            {
-                case LineAttachmentTypes::ATTACH_P0:
-                    return this->_transform.position;
+            BitMth::linalg::Vec2<float> dir{ std::cos(_transform.angle), std::sin(_transform.angle) };
+            switch(_lineAttachType){
+                case BitMth::geometry::types::LineAttachmentTypes::ATTACH_P1:
+                    return _transform.position + (dir * _transform.scale.x);
 
-                case LineAttachmentTypes::ATTACH_P1:
-                    return this->_transform.position + dir * this->_transform.scale.x;
-
-                case LineAttachmentTypes::ATTACH_CENTER:
+                case BitMth::geometry::types::LineAttachmentTypes::ATTACH_CENTER:
                     return this->_transform.position - dir * (this->_transform.scale.x * 0.5f);
             }
             return {};
         }
 
-        Math::Vec2 getPosPoint1(){
-            Math::Vec2 dir{
-                std::cos(this->_transform.angle),
-                std::sin(this->_transform.angle)
-            };
+        [[nodiscard]] const BitMth::linalg::Vec2<float> getPosPoint1() const {
+            if(_lineAttachType == BitMth::geometry::types::LineAttachmentTypes::ATTACH_P1) return getPosition();
 
-            switch(this->_lineAttachType)
-            {
-                case LineAttachmentTypes::ATTACH_P0:
-                    return this->_transform.position + dir * this->_transform.scale.x;
+            BitMth::linalg::Vec2<float> dir{ std::cos(_transform.angle), std::sin(_transform.angle) };
 
-                case LineAttachmentTypes::ATTACH_P1:
-                    return this->_transform.position;
-
-                case LineAttachmentTypes::ATTACH_CENTER:
+            switch(_lineAttachType){
+                case BitMth::geometry::types::LineAttachmentTypes::ATTACH_P0:
+                    return this->_transform.position + (dir * this->_transform.scale.x);
+                case BitMth::geometry::types::LineAttachmentTypes::ATTACH_CENTER:
                     return this->_transform.position + dir * (this->_transform.scale.x * 0.5f);
             }
             return {};
         }
 
-        void setLineAttachType(LineAttachmentTypes attachType){
+        void setLineAttachType(BitMth::geometry::types::LineAttachmentTypes attachType){
+            if(attachType == _lineAttachType) return;
             
-            Math::Vec2 p0 = this->getPosPoint0();
-            Math::Vec2 p1 = this->getPosPoint1();
+            BitMth::linalg::Vec2<float> p0 = getPosPoint0();
+            BitMth::linalg::Vec2<float> p1 = getPosPoint1();
 
-            this->_lineAttachType = attachType;
-            this->calculateVertices();
+            _lineAttachType = attachType;
+            // calculateVertices();
 
-            this->_transform.scale.x = p0.distance(p1);
-            this->_transform.angle   = p0.angle(p1);
+            // _transform.scale.x = p0.distance(p1);
+            // _transform.angle   = p0.angleTo(p1);
 
-            switch(this->_lineAttachType)
-            {
-                case LineAttachmentTypes::ATTACH_P0:     this->_transform.position = p0; break;
-                case LineAttachmentTypes::ATTACH_P1:     this->_transform.position = p1; break;
-                case LineAttachmentTypes::ATTACH_CENTER: this->_transform.position = p0.betweenPoint(p1); break;
+            switch(this->_lineAttachType){
+                case BitMth::geometry::types::LineAttachmentTypes::ATTACH_P0:     _transform.position = p0; break;
+                case BitMth::geometry::types::LineAttachmentTypes::ATTACH_P1:     _transform.position = p1; break;
+                case BitMth::geometry::types::LineAttachmentTypes::ATTACH_CENTER: _transform.position = p0.midpoint(p1); break;
             }
+            _mesh.geometryDirty = true;
         }
 
-        void setLineWidth(float width){
-            this->_material.lineWidth = width;
-        }
+        void setLineWidth(float lineWidth) { _material.lineWidth = lineWidth; }
+        void setLength(float length){ _transform.scale.x = length; }
 
-        float getLength(){
-            return this->_transform.scale.x;
-        }
+        [[nodiscard]] float getLength() const noexcept { return _transform.scale.x;}
 
-        void setLength(float length){
-            this->_transform.scale.x = length; 
-        }
     };
 
 }

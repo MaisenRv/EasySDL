@@ -24,7 +24,7 @@ namespace EasySDL::objects{
         }
     
         Circle(): Shape({0,0}),_radius(10),_resolution(20){};
-        Circle(float x, float y, float radius, int resolution): Shape({x,y}),_radius(radius), _resolution(resolution){};
+        Circle(const BitMth::linalg::Vec2<float>& position, float radius, int resolution): Shape(position),_radius(radius), _resolution(resolution){};
 
         void render(render::Renderer2D& renderer,EasySDL::IWindow *w) override{ renderer.draw(w,*this); }
 
