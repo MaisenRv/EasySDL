@@ -1,36 +1,32 @@
 #pragma once
 
-#include "../../interface/IWindow.hpp"
-#include "../../render/Renderer2D.hpp"
-#include "shape.hpp"
+#include <EasySDL/interface/IWindow.hpp>
+#include <EasySDL/render/Renderer2D.hpp>
+#include <EasySDL/objects/shape/Shape.hpp>
+
 #include <vector>
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
 #include <functional>
 
-namespace EasySDL
-{
+namespace EasySDL::objects{
  
-    struct LogicalPoint {
-        double x;
-        double y;
-    };
+    // struct LogicalPoint {
+    //     double x;
+    //     double y;
+    // };
     
-    class LineStrip : public EasySDL::Shape
-    {   
+    class LineStrip : public Shape {   
     public:
-        void calculateVertices() override{
-            this->_mesh.geometryDirty = true;
-        }
-        std::vector<LogicalPoint> _points;
+        void calculateVertices() override{ _mesh.geometryDirty = true; }
+        // std::vector<LogicalPoint> _points;
+
         LineStrip(GLfloat lineWidth) : Shape({0,0}){
-            this->_material.lineWidth = lineWidth;
-            this->_mesh.primitiveType = PrimitiveType::LineStrip;
+            _material.lineWidth = lineWidth;
+            _mesh.primitiveType = render::types::PrimitiveType::LineStrip;
         }
 
-        void render(Renderer2D& renderer,EasySDL::IWindow *w) override{
-            renderer.draw(w,*this);
-        }
+        void render(render::Renderer2D& renderer,EasySDL::IWindow *w) override{ renderer.draw(w,*this); }
 
         // void drawLineChart(EasySDL::IWindow *w,float domainMin, float domainMax,std::function<Math::Vec2(float,float)> map){
         //     if (_points.empty()) return;
@@ -79,17 +75,17 @@ namespace EasySDL
         // }
 
 
-        void addPoint(Math::Vec2 point){
-            this->_mesh.addPoint(point.x,point.y);
+        void addPoint(const BitMth::linalg::Vec2<float>& point){
+            _mesh.vertices.push_back(point);
         }
 
         // void addPointLineChart(Math::Vec2 point){
         //     this->_points.push_back({point.x, point.y});
         // }
 
-        void removeFirstPoint(){
-            this->_mesh.removeFirstPoint();
-        }
+        // void removeFirstPoint(){
+        //     this->_mesh.removeFirstPoint();
+        // }
 
         // void shiftX(float delta,EasySDL::IWindow *w){
         //     this->_position.x -= delta;
@@ -106,15 +102,9 @@ namespace EasySDL
         //     }
         // }
 
-        void clearVertexList(){
-            this->_mesh.clear();
-        }
+        void clearVertexList(){ _mesh.clear(); }
 
-        //-------------------- Getters and setters
-
-        int getVertexSize(){
-            return this->_mesh.vertexCount();
-        }
+        [[nodiscard]] int getVertexSize() const noexcept { return _mesh.vertexCount(); }
 
         // std::vector<float> &getVertexList(){
         //     return this->_vertexList;

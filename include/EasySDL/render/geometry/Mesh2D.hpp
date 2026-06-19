@@ -21,10 +21,10 @@ namespace EasySDL::render{
         Mesh2D& operator=( Mesh2D&& mesh) noexcept = default;
         ~Mesh2D() = default;
 
-        // void clear(){ 
-        //     vertices.clear();
-        //     geometryDirty = true;
-        // }
+        void clear(){ 
+            vertices.clear();
+            geometryDirty = true;
+        }
 
         [[nodiscard]] const size_t vertexCount() const noexcept { return vertices.size(); }
 
