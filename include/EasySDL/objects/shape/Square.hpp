@@ -1,29 +1,31 @@
 #pragma once
 
-#include "../../interface/IWindow.hpp"
-#include "../../render/geometry/Geometry2D.hpp"
-#include "../../render/Renderer2D.hpp"
-#include "shape.hpp"
+#include <EasySDL/interface/IWindow.hpp>
+#include <EasySDL/render/Renderer2D.hpp>
+#include <EasySDL/objects/shape/Shape.hpp>
+#include <BitMth/geometry/GeometryFactory.hpp>
 
 #include <SDL2/SDL.h>
 
-namespace EasySDL
-{
-    class Square : public EasySDL::Shape 
-    {
+namespace EasySDL::objects{
+    class Square : public Shape {
     private:
         float _width;
         float _height;
 
     public:
         void calculateVertices() override{
-            Geometry2D<float>::buildSquare(this->_mesh, this->_width, this->_height);
+            if (_mesh.vertices.empty()){    
+                _mesh.vertices = BitMth::geometry::GeometryFactory<float>::makeSquare(_width,_height);
+                return;
+            }
+            BitMth::geometry::GeometryFactory<float>::fillSquare(_mesh.vertices,_width,_height);
         }
-        Square(float x, float y, float width, float height) : Shape({x,y}), _width(width), _height(height) {}
 
-        void render(Renderer2D& renderer,EasySDL::IWindow *w) override{
-            renderer.draw(w,*this);
-        }
+        Square(float width, float height) : Shape({0,0}), _width(width), _height(height) {}
+        Square(const BitMth::linalg::Vec2<float>& position, float width, float height) : Shape(position), _width(width), _height(height) {}
+
+        void render(render::Renderer2D& renderer,EasySDL::IWindow *w) override{ renderer.draw(w,*this); }
 
         void setWidth(float width){
             this->_width = width;
@@ -33,5 +35,8 @@ namespace EasySDL
             this->_height = height;
             this->_mesh.geometryDirty = true;
         }
+
+        [[nodiscard]] float getWidth() const noexcept  { return _width; }
+        [[nodiscard]] float getHeight() const noexcept { return _height; }
     };
 }
